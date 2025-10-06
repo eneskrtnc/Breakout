@@ -1,0 +1,31 @@
+# Unity - proje dışlanacakları
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Cc]rashReports/
+
+# Otomatik/IDE dosyaları
+.vs/
+.idea/
+*.csproj
+*.sln
+*.user
+*.userprefs
+*.pidb
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# VS Code çalışma klasörü (opsiyonel dışla; istersen proje ayarlarını paylaşmak için açık da bırakabilirsin)
+.vscode/
+
+# OS çöp dosyaları
+.DS_Store
+Thumbs.db
