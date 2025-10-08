@@ -10,6 +10,9 @@ concurrency:
 
 jobs:
   build:
+    # Fork PR'lardan geliyorsa secrets enjekte edilmez → atla
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -25,8 +28,8 @@ jobs:
           find Assets -type d -name "obj" -prune -exec rm -rf {} +
           find Assets -type d -name "bin" -prune -exec rm -rf {} +
 
-            - name: Secret var mı? (secrets katmanı)
-        if: ${{ secrets.UNITY_LICENSE == '' }}
+      - name: Secret var mı? (secrets katmanı)
+        if: ${{ secrets.UNITY_LICENSE == '' || secrets.UNITY_LICENSE == null }}
         run: |
           echo "UNITY_LICENSE repo secret olarak TANIMLI DEĞİL veya BOŞ. Settings > Secrets > Actions altında kontrol edin."
           exit 1
@@ -37,7 +40,6 @@ jobs:
           if [ -z "${UNITY_LICENSE+x}" ]; then
             echo "UNITY_LICENSE env’de YOK (env altında bağlanmamış)."; exit 1
           fi
-          # Uzunluk kontrolü (değerin maskesi loglanmaz ama uzunluk görünür)
           echo "UNITY_LICENSE uzunluk (byte): ${#UNITY_LICENSE}"
           if [ -z "$UNITY_LICENSE" ]; then
             echo "UNITY_LICENSE env’de VAR ama DEĞERİ BOŞ."; exit 1
@@ -49,7 +51,6 @@ jobs:
         run: |
           echo "HEAD: ${{ github.event.pull_request.head.repo.full_name }}"
           echo "BASE: ${{ github.repository }}"
-
 
       - name: Eksik gizli anahtar kontrolü
         run: |
