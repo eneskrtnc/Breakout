@@ -44,6 +44,12 @@ jobs:
           fi
           echo "OK: UNITY_LICENSE env’de mevcut."
 
+      - name: PR Kaynağı
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo "HEAD: ${{ github.event.pull_request.head.repo.full_name }}"
+          echo "BASE: ${{ github.repository }}"
+
 
       - name: Eksik gizli anahtar kontrolü
         run: |
