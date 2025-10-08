@@ -13,7 +13,7 @@ jobs:
       - name: Request activation file
         uses: game-ci/unity-request-activation-file@v4
         with:
-          unityVersion: ${{ steps.v.outputs.unity }}
+          unityVersion: 6000.2.2f1
       - name: Upload .alf
         uses: actions/upload-artifact@v4
         with:
