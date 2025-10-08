@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
       REQUIRED_SECRETS: "UNITY_LICENSE"
 
     steps:

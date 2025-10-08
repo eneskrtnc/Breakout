@@ -9,6 +9,9 @@
 [Mm]emoryCaptures/
 [Cc]rashReports/
 
+Assets/**/obj/
+Assets/**/bin/
+
 # Otomatik/IDE dosyaları
 .vs/
 .idea/
