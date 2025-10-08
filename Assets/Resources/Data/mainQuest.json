@@ -1,0 +1,48 @@
+{
+  "zephyra": [
+    {
+      "id": "ZEP-MQ1",
+      "title": "Lonca’nın Nefesi",
+      "type": "calibration",
+      "requires": [],
+      "requiresModules": ["storm_shield_mk1"],
+      "successFlags": ["wind_guild_trust_1"],
+      "estMinutes": 12,
+      "rewards": ["rep:wind_guild:50","item:route_map"]
+    },
+    {
+      "id": "ZEP-MQ2",
+      "title": "Korsan Yemi",
+      "type": "escort",
+      "requires": ["ZEP-MQ1"],
+      "requiresModules": ["storm_shield_mk1","light_turret"],
+      "estMinutes": 18,
+      "rewards": ["plan:sky_compass","rep:wind_guild:75"]
+    },
+    {
+      "id": "ZEP-MQ3",
+      "title": "Boreas Çanı Onarımı",
+      "type": "scavenge+assemble",
+      "requires": ["ZEP-MQ2"],
+      "estMinutes": 22,
+      "rewards": ["plan:storm_shield_mk2","mat:ether_alloy*3"]
+    },
+    {
+      "id": "ZEP-MQ4",
+      "title": "Fırtına Koridoru",
+      "type": "timed_navigation",
+      "requires": ["ZEP-MQ3","module:storm_shield_mk2"],
+      "estMinutes": 12,
+      "rewards": ["unlock:bell_tower_access"]
+    },
+    {
+      "id": "ZEP-MQ5",
+      "title": "Göğün Şeridi",
+      "type": "boss+rhythm",
+      "requires": ["ZEP-MQ4"],
+      "estMinutes": 22,
+      "rewards": ["key:ruzgar_damgasi","rep:wind_guild:100","item:storm_lantern"]
+    }
+  ]
+  
+}

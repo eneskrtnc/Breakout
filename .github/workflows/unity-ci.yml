@@ -1,0 +1,74 @@
+name: Unity CI (Debug)
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      REQUIRED_SECRETS: "UNITY_LICENSE"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Eksik gizli anahtar kontrolü
+        run: |
+          missing=0
+          for key in $(echo "$REQUIRED_SECRETS" | tr ',' ' '); do
+            key=$(echo $key | xargs)
+            if [ -z "${!key}" ]; then
+              echo "::error title=Eksik Gizli Anahtar::$key tanımlı değil. (Settings > Secrets > Actions)"
+              missing=1
+            fi
+          done
+          [ $missing -eq 0 ] || { echo "Eksik secret nedeniyle durdu."; exit 1; }
+
+      - name: Build (Unity Development)
+        id: build
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          unityVersion: 6000.2.2f1
+          targetPlatform: StandaloneWindows64
+          buildName: SpaceTrader
+          buildMethod: BuildScript.BuildWindowsDevelopment
+          allowDirtyBuild: true
+          customParameters: -nographics -quit
+
+      - name: Paketle artefact
+        id: pack
+        run: |
+          START=$(date +%s)
+          mkdir -p exports
+          zip -r "exports/debug_${GITHUB_SHA}.zip" build/StandaloneWindows64 > /dev/null
+          SIZE=$(du -h "exports/debug_${GITHUB_SHA}.zip" | awk '{print $1}')
+          END=$(date +%s)
+          echo "size=$SIZE" >> $GITHUB_OUTPUT
+          echo "duration=$((END-START))" >> $GITHUB_OUTPUT
+
+      - name: Telemetri
+        run: |
+          echo "::notice title=Build Süresi::${{ steps.pack.outputs.duration }} saniye"
+          echo "::notice title=Artefact Boyutu::${{ steps.pack.outputs.size }}"
+          {
+            echo "### CI Telemetri"
+            echo "- Süre: ${{ steps.pack.outputs.duration }} sn"
+            echo "- Artefact: \`exports/debug_${GITHUB_SHA}.zip\`"
+            echo "- Boyut: ${{ steps.pack.outputs.size }}"
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Artefact yükle
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-${{ github.sha }}
+          path: exports/debug_${{ github.sha }}.zip
+          if-no-files-found: error
