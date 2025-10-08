@@ -25,6 +25,26 @@ jobs:
           find Assets -type d -name "obj" -prune -exec rm -rf {} +
           find Assets -type d -name "bin" -prune -exec rm -rf {} +
 
+            - name: Secret var mı? (secrets katmanı)
+        if: ${{ secrets.UNITY_LICENSE == '' }}
+        run: |
+          echo "UNITY_LICENSE repo secret olarak TANIMLI DEĞİL veya BOŞ. Settings > Secrets > Actions altında kontrol edin."
+          exit 1
+
+      - name: Env’e geldi mi? (runtime katmanı)
+        shell: bash
+        run: |
+          if [ -z "${UNITY_LICENSE+x}" ]; then
+            echo "UNITY_LICENSE env’de YOK (env altında bağlanmamış)."; exit 1
+          fi
+          # Uzunluk kontrolü (değerin maskesi loglanmaz ama uzunluk görünür)
+          echo "UNITY_LICENSE uzunluk (byte): ${#UNITY_LICENSE}"
+          if [ -z "$UNITY_LICENSE" ]; then
+            echo "UNITY_LICENSE env’de VAR ama DEĞERİ BOŞ."; exit 1
+          fi
+          echo "OK: UNITY_LICENSE env’de mevcut."
+
+
       - name: Eksik gizli anahtar kontrolü
         run: |
           missing=0
