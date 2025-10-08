@@ -11,6 +11,7 @@ public static class BuildScript
 
     public static void BuildWindows(bool development)
     {
+        var x = 0;
         var scenes = EditorBuildSettings.scenes;
         var scenePaths = new string[scenes.Length];
         for (int i = 0; i < scenes.Length; i++) scenePaths[i] = scenes[i].path;
