@@ -19,6 +19,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Clean stray SDK build dirs under Assets
+        run: |
+          find Assets -type d -name "obj" -prune -exec rm -rf {} +
+          find Assets -type d -name "bin" -prune -exec rm -rf {} +
+
       - name: Eksik gizli anahtar kontrolü
         run: |
           missing=0
