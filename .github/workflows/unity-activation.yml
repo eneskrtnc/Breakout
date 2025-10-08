@@ -1,0 +1,21 @@
+name: Unity Activation (one-time)
+on: workflow_dispatch
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get Unity version
+        id: v
+        run: |
+          VER=$(grep m_EditorVersion ProjectSettings/ProjectVersion.txt | awk '{print $2}')
+          echo "unity=$VER" >> $GITHUB_OUTPUT
+      - name: Request activation file
+        uses: game-ci/unity-request-activation-file@v4
+        with:
+          unityVersion: ${{ steps.v.outputs.unity }}
+      - name: Upload .alf
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unity_ActivationFile
+          path: ./*.alf
