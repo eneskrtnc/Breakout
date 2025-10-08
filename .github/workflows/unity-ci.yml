@@ -10,13 +10,13 @@ concurrency:
 
 jobs:
   build:
-    # Fork PR'lardan geliyorsa secrets enjekte edilmez → atla
+    # Fork PR'da secrets gelmeyeceği için job'u atla (opsiyonel ama önerilir)
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
 
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }} # secrets -> env'e bağlandı
       REQUIRED_SECRETS: "UNITY_LICENSE"
 
     steps:
@@ -28,13 +28,14 @@ jobs:
           find Assets -type d -name "obj" -prune -exec rm -rf {} +
           find Assets -type d -name "bin" -prune -exec rm -rf {} +
 
-      - name: Secret var mı? (secrets katmanı)
-        if: ${{ secrets.UNITY_LICENSE == '' || secrets.UNITY_LICENSE == null }}
+      # 🔧 DÜZELTİLEN KISIM: if içinde secrets YOK, env kullan
+      - name: Secret var mı? (env katmanı)
+        if: ${{ env.UNITY_LICENSE == '' || env.UNITY_LICENSE == null }}
         run: |
-          echo "UNITY_LICENSE repo secret olarak TANIMLI DEĞİL veya BOŞ. Settings > Secrets > Actions altında kontrol edin."
+          echo "UNITY_LICENSE boş veya tanımlı değil. Settings > Secrets > Actions altında ekleyin."
           exit 1
 
-      - name: Env’e geldi mi? (runtime katmanı)
+      - name: Env’e geldi mi? (runtime doğrulama)
         shell: bash
         run: |
           if [ -z "${UNITY_LICENSE+x}" ]; then
@@ -68,7 +69,7 @@ jobs:
         id: build
         uses: game-ci/unity-builder@v4
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_LICENSE: ${{ env.UNITY_LICENSE }} # burada da env’den kullan
         with:
           unityVersion: 6000.2.2f1
           targetPlatform: StandaloneWindows64
