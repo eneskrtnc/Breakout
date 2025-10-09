@@ -17,7 +17,7 @@ jobs:
         run: dotnet tool restore
 
       - name: CSharpier (check)
-        run: dotnet csharpier check . --verbosity quiet
+        run: dotnet csharpier check .
 
       - name: dotnet-format (verify)
         shell: bash

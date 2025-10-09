@@ -7,13 +7,17 @@ Set-Location -LiteralPath (git rev-parse --show-toplevel)
 Write-Host "🔎 CSharpier (check)"
 dotnet csharpier check .
 
-# 2) dotnet-format: tek .sln'e kilitli
-$solution = ".\Space Trader.sln"   # sln adını kendi adına göre değiştir
-if (-not (Test-Path -LiteralPath $solution)) {
-    throw "Çözüm dosyası bulunamadı: $solution"
+# 2) dotnet-format: .sln varsa onu kullan, yoksa folder mode
+$solution = (Get-ChildItem -LiteralPath . -Filter *.sln -File | Select-Object -First 1)
+
+if ($solution) {
+    Write-Host "🧹 dotnet-format (verify-no-changes) on $($solution.FullName)"
+    dotnet format $solution.FullName --verify-no-changes
+}
+else {
+    Write-Host "ℹ️ .sln bulunamadı, folder mode kullanılıyor."
+    dotnet format --folder . --verify-no-changes
 }
 
-Write-Host "🧹 dotnet-format (verify-no-changes) on $solution"
-dotnet format $solution --verify-no-changes
 
 Write-Host "✅ Lint/format OK"
