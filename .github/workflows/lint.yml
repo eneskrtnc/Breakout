@@ -1,0 +1,40 @@
+name: Lint
+on:
+  pull_request: { branches: [main, dev] }
+  push: { branches: [main, dev] }
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore tools
+        run: dotnet tool restore
+
+      - name: CSharpier (check)
+        run: dotnet csharpier check . --verbosity quiet
+
+      - name: dotnet-format (verify)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOLUTION="$(git ls-files '*.sln' | head -n 1 || true)"
+          if [[ -n "$SOLUTION" ]]; then
+            echo "Using solution: $SOLUTION"
+            dotnet format "$SOLUTION" --verify-no-changes --verbosity quiet
+          else
+            echo "No .sln found, falling back to folder mode."
+            dotnet format --folder . --verify-no-changes --verbosity quiet
+          fi
+
+      - name: Summary
+        if: ${{ always() }}
+        run: |
+          echo "## Lint / Format Sonucu" >> $GITHUB_STEP_SUMMARY
+          echo "- CSharpier: check" >> $GITHUB_STEP_SUMMARY
+          echo "- dotnet-format: verify-no-changes" >> $GITHUB_STEP_SUMMARY
