@@ -10,66 +10,46 @@ concurrency:
 
 jobs:
   build:
-    # Fork PR'da secrets gelmeyeceği için job'u atla (opsiyonel ama önerilir)
+    # Fork'tan gelen PR'larda GitHub güvenlik gereği secrets GELMEZ → bu job'u atla
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
 
     runs-on: ubuntu-latest
     timeout-minutes: 15
+
+    # Pro/Student (serial) lisans için gerekenler
     env:
-      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }} # secrets -> env'e bağlandı
-      REQUIRED_SECRETS: "UNITY_LICENSE"
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # (Opsiyonel) Unity paketlerinin bıraktığı obj/bin klasörlerini temizle
       - name: Clean stray SDK build dirs under Assets
         run: |
           find Assets -type d -name "obj" -prune -exec rm -rf {} +
           find Assets -type d -name "bin" -prune -exec rm -rf {} +
 
-      # 🔧 DÜZELTİLEN KISIM: if içinde secrets YOK, env kullan
-      - name: Secret var mı? (env katmanı)
-        if: ${{ env.UNITY_LICENSE == '' || env.UNITY_LICENSE == null }}
-        run: |
-          echo "UNITY_LICENSE boş veya tanımlı değil. Settings > Secrets > Actions altında ekleyin."
-          exit 1
-
-      - name: Env’e geldi mi? (runtime doğrulama)
+      # Hızlı doğrulama: gerekli secret'lar geldi mi?
+      - name: Guard — Pro/Student secrets var mı?
         shell: bash
         run: |
-          if [ -z "${UNITY_LICENSE+x}" ]; then
-            echo "UNITY_LICENSE env’de YOK (env altında bağlanmamış)."; exit 1
-          fi
-          echo "UNITY_LICENSE uzunluk (byte): ${#UNITY_LICENSE}"
-          if [ -z "$UNITY_LICENSE" ]; then
-            echo "UNITY_LICENSE env’de VAR ama DEĞERİ BOŞ."; exit 1
-          fi
-          echo "OK: UNITY_LICENSE env’de mevcut."
+          [ -n "$UNITY_EMAIL" ]    || { echo "UNITY_EMAIL eksik"; exit 1; }
+          [ -n "$UNITY_PASSWORD" ] || { echo "UNITY_PASSWORD eksik"; exit 1; }
+          [ -n "$UNITY_SERIAL" ]   || { echo "UNITY_SERIAL eksik"; exit 1; }
+          echo "OK: Pro/Student lisans bilgileri env'de mevcut (maskeli)."
 
-      - name: PR Kaynağı
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          echo "HEAD: ${{ github.event.pull_request.head.repo.full_name }}"
-          echo "BASE: ${{ github.repository }}"
-
-      - name: Eksik gizli anahtar kontrolü
-        run: |
-          missing=0
-          for key in $(echo "$REQUIRED_SECRETS" | tr ',' ' '); do
-            key=$(echo $key | xargs)
-            if [ -z "${!key}" ]; then
-              echo "::error title=Eksik Gizli Anahtar::$key tanımlı değil. (Settings > Secrets > Actions)"
-              missing=1
-            fi
-          done
-          [ $missing -eq 0 ] || { echo "Eksik secret nedeniyle durdu."; exit 1; }
-
+      # Asıl build
       - name: Build (Unity Development)
         id: build
         uses: game-ci/unity-builder@v4
         env:
-          UNITY_LICENSE: ${{ env.UNITY_LICENSE }} # burada da env’den kullan
+          # Builder, Pro/Plus/Student serial ile aktivasyonu bu env'lerden yapar
+          UNITY_EMAIL: ${{ env.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ env.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ env.UNITY_SERIAL }}
         with:
           unityVersion: 6000.2.2f1
           targetPlatform: StandaloneWindows64
@@ -78,6 +58,7 @@ jobs:
           allowDirtyBuild: true
           customParameters: -nographics -quit
 
+      # Artefact paketle
       - name: Paketle artefact
         id: pack
         run: |
@@ -89,6 +70,7 @@ jobs:
           echo "size=$SIZE" >> $GITHUB_OUTPUT
           echo "duration=$((END-START))" >> $GITHUB_OUTPUT
 
+      # Telemetri (özet)
       - name: Telemetri
         run: |
           echo "::notice title=Build Süresi::${{ steps.pack.outputs.duration }} saniye"
@@ -100,6 +82,7 @@ jobs:
             echo "- Boyut: ${{ steps.pack.outputs.size }}"
           } >> $GITHUB_STEP_SUMMARY
 
+      # Artefact yükle
       - name: Artefact yükle
         uses: actions/upload-artifact@v4
         with:
