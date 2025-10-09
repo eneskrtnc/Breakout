@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
-using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public static class BuildScript
@@ -18,13 +17,15 @@ public static class BuildScript
 
     public static void BuildWindows(bool development)
     {
-        var scenePaths = EditorBuildSettings.scenes
-            .Where(s => s.enabled)
+        var scenePaths = EditorBuildSettings
+            .scenes.Where(s => s.enabled)
             .Select(s => s.path)
             .ToArray();
 
         if (scenePaths.Length == 0)
-            throw new Exception("Build Settings > Scenes In Build içine en az bir sahne eklemelisin.");
+            throw new Exception(
+                "Build Settings > Scenes In Build içine en az bir sahne eklemelisin."
+            );
 
         // Çıkış klasörü (ENV ile override edilebilir)
         var outDir = Environment.GetEnvironmentVariable("UNITY_BUILD_OUTPUT");
@@ -33,7 +34,9 @@ public static class BuildScript
         Directory.CreateDirectory(outDir);
 
         var opts = development
-            ? BuildOptions.Development | BuildOptions.AllowDebugging | BuildOptions.ConnectWithProfiler
+            ? BuildOptions.Development
+                | BuildOptions.AllowDebugging
+                | BuildOptions.ConnectWithProfiler
             : BuildOptions.None;
 
         var bpo = new BuildPlayerOptions
@@ -41,7 +44,7 @@ public static class BuildScript
             scenes = scenePaths,
             target = BuildTarget.StandaloneWindows64,
             locationPathName = Path.Combine(outDir, "SpaceTrader.exe"),
-            options = opts
+            options = opts,
         };
 
         var sw = Stopwatch.StartNew();
@@ -54,20 +57,22 @@ public static class BuildScript
         // GitHub Actions Step Summary (lokalde yoksa Console'a yazar)
         var summaryPath = Environment.GetEnvironmentVariable("GITHUB_STEP_SUMMARY");
         var text =
-            "## Unity Build\n" +
-            $"- Result: {(ok ? "Succeeded ✅" : "Failed ❌")}\n" +
-            $"- Mode: {(development ? "Development" : "Release")}\n" +
-            $"- Duration: {sw.Elapsed:mm\\:ss}\n" +
-            $"- Artifact size: {sizeMb:0.00} MB\n" +
-            $"- Output: `{bpo.locationPathName.Replace("\\", "/")}`\n";
+            "## Unity Build\n"
+            + $"- Result: {(ok ? "Succeeded ✅" : "Failed ❌")}\n"
+            + $"- Mode: {(development ? "Development" : "Release")}\n"
+            + $"- Duration: {sw.Elapsed:mm\\:ss}\n"
+            + $"- Artifact size: {sizeMb:0.00} MB\n"
+            + $"- Output: `{bpo.locationPathName.Replace("\\", "/")}`\n";
 
         if (!string.IsNullOrEmpty(summaryPath))
-                    File.AppendAllText(summaryPath, text);
+            File.AppendAllText(summaryPath, text);
         else
             Debug.Log(text);
 
         if (!ok)
-            throw new Exception($"Build failed: {report.summary.result} | Errors: {report.summary.totalErrors}");
+            throw new Exception(
+                $"Build failed: {report.summary.result} | Errors: {report.summary.totalErrors}"
+            );
     }
 }
 #endif
