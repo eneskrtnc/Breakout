@@ -1,8 +1,11 @@
 #if UNITY_EDITOR
+using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
-using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public static class BuildScript
 {
@@ -14,30 +17,62 @@ public static class BuildScript
 
     public static void BuildWindows(bool development)
     {
-        var scenes = EditorBuildSettings.scenes;
-        var scenePaths = new string[scenes.Length];
-        for (int i = 0; i < scenes.Length; i++) scenePaths[i] = scenes[i].path;
+        var scenePaths = EditorBuildSettings
+            .scenes.Where(s => s.enabled)
+            .Select(s => s.path)
+            .ToArray();
 
-        var outDir = "build/StandaloneWindows64";
+        if (scenePaths.Length == 0)
+            throw new Exception(
+                "Build Settings > Scenes In Build içine en az bir sahne eklemelisin."
+            );
+
+        // Çıkış klasörü (ENV ile override edilebilir)
+        var outDir = Environment.GetEnvironmentVariable("UNITY_BUILD_OUTPUT");
+        if (string.IsNullOrEmpty(outDir))
+            outDir = development ? "build/StandaloneWindows64Dev" : "build/StandaloneWindows64";
         Directory.CreateDirectory(outDir);
 
-        var opts = new BuildPlayerOptions
+        var opts = development
+            ? BuildOptions.Development
+                | BuildOptions.AllowDebugging
+                | BuildOptions.ConnectWithProfiler
+            : BuildOptions.None;
+
+        var bpo = new BuildPlayerOptions
         {
             scenes = scenePaths,
-            locationPathName = Path.Combine(outDir, "SpaceTrader.exe"),
             target = BuildTarget.StandaloneWindows64,
-            options = development
-                ? BuildOptions.Development | BuildOptions.AllowDebugging
-                : BuildOptions.None
+            locationPathName = Path.Combine(outDir, "SpaceTrader.exe"),
+            options = opts,
         };
 
-        var report = BuildPipeline.BuildPlayer(opts);
-        if (report.summary.result != BuildResult.Succeeded)
-        {
-            Debug.LogError($"Build failed: {report.summary.result} | Errors: {report.summary.totalErrors}");
-            throw new System.Exception("Build failed");
-        }
-        Debug.Log($"Build ok. Size: {report.summary.totalSize / (1024 * 1024)} MB | Mode: {(development ? "Development" : "Release")}");
+        var sw = Stopwatch.StartNew();
+        var report = BuildPipeline.BuildPlayer(bpo);
+        sw.Stop();
+
+        var ok = report.summary.result == BuildResult.Succeeded;
+        var sizeMb = report.summary.totalSize / (1024f * 1024f);
+
+        // GitHub Actions Step Summary (lokalde yoksa Console'a yazar)
+        var summaryPath = Environment.GetEnvironmentVariable("GITHUB_STEP_SUMMARY");
+        var text =
+            "## Unity Build\n"
+            + $"- Result: {(ok ? "Succeeded ✅" : "Failed ❌")}\n"
+            + $"- Mode: {(development ? "Development" : "Release")}\n"
+            + $"- Duration: {sw.Elapsed:mm\\:ss}\n"
+            + $"- Artifact size: {sizeMb:0.00} MB\n"
+            + $"- Output: `{bpo.locationPathName.Replace("\\", "/")}`\n";
+
+        if (!string.IsNullOrEmpty(summaryPath))
+            File.AppendAllText(summaryPath, text);
+        else
+            Debug.Log(text);
+
+        if (!ok)
+            throw new Exception(
+                $"Build failed: {report.summary.result} | Errors: {report.summary.totalErrors}"
+            );
     }
 }
 #endif

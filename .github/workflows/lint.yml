@@ -1,0 +1,46 @@
+name: Lint
+on:
+  pull_request: { branches: [main, dev] }
+  push: { branches: [main, dev] }
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore tools
+        run: dotnet tool restore
+
+      - name: CSharpier (check)
+        run: dotnet csharpier check .
+
+      - name: dotnet-format (verify if workspace exists)
+        shell: bash
+        run: |
+          set -euo pipefail
+          SLN="$(git ls-files '*.sln' | head -n 1 || true)"
+          CSPROJ="$(git ls-files '*.csproj' | head -n 1 || true)"
+
+          if [[ -n "$SLN" ]]; then
+            echo "Using solution: $SLN"
+            dotnet format "$SLN" --verify-no-changes --verbosity quiet
+          elif [[ -n "$CSPROJ" ]]; then
+            echo "Using project: $CSPROJ"
+            dotnet format "$CSPROJ" --verify-no-changes --verbosity quiet
+          else
+            echo "No .sln or .csproj in repo; skipping dotnet-format (Unity generates these locally)."
+            echo "### dotnet-format skipped" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Reason: no solution/project files present in CI." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Summary
+        if: ${{ always() }}
+        run: |
+          echo "## Lint / Format Sonucu" >> $GITHUB_STEP_SUMMARY
+          echo "- CSharpier: check" >> $GITHUB_STEP_SUMMARY
+          echo "- dotnet-format: verify-no-changes" >> $GITHUB_STEP_SUMMARY
