@@ -7,16 +7,16 @@ Set-Location -LiteralPath (git rev-parse --show-toplevel)
 Write-Host "🔎 CSharpier (check)"
 dotnet csharpier check .
 
-# 2) dotnet-format: .sln varsa onu kullan, yoksa folder mode
-$solution = (Get-ChildItem -LiteralPath . -Filter *.sln -File | Select-Object -First 1)
+# .sln ya da .csproj bul
+$solution = Get-ChildItem -Filter *.sln -File | Select-Object -First 1
+$project  = if (-not $solution) { Get-ChildItem -Filter *.csproj -File | Select-Object -First 1 } else { $null }
 
 if ($solution) {
-    Write-Host "🧹 dotnet-format (verify-no-changes) on $($solution.FullName)"
     dotnet format $solution.FullName --verify-no-changes
-}
-else {
-    Write-Host "ℹ️ .sln bulunamadı, folder mode kullanılıyor."
-    dotnet format --folder . --verify-no-changes
+} elseif ($project) {
+    dotnet format $project.FullName --verify-no-changes
+} else {
+    Write-Host "ℹ️ .sln/.csproj yok; dotnet-format atlandı (CSharpier check yapıldı)."
 }
 
 
