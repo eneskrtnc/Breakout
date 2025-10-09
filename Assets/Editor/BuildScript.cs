@@ -9,9 +9,11 @@ public static class BuildScript
     [MenuItem("Build/Windows Development")]
     public static void BuildWindowsDevelopment() => BuildWindows(true);
 
+    // CI’nın çağıracağı RELEASE entrypoint
+    public static void BuildWindowsRelease() => BuildWindows(false);
+
     public static void BuildWindows(bool development)
     {
-        var x = 0;
         var scenes = EditorBuildSettings.scenes;
         var scenePaths = new string[scenes.Length];
         for (int i = 0; i < scenes.Length; i++) scenePaths[i] = scenes[i].path;
@@ -35,7 +37,7 @@ public static class BuildScript
             Debug.LogError($"Build failed: {report.summary.result} | Errors: {report.summary.totalErrors}");
             throw new System.Exception("Build failed");
         }
-        Debug.Log($"Build ok. Size: {report.summary.totalSize / (1024 * 1024)} MB");
+        Debug.Log($"Build ok. Size: {report.summary.totalSize / (1024 * 1024)} MB | Mode: {(development ? "Development" : "Release")}");
     }
 }
 #endif
