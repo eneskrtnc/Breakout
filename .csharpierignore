@@ -1,0 +1,5 @@
+Library/
+Packages/
+ProjectSettings/
+Assets/**/Generated/**
+Assets/**/ThirdParty/**

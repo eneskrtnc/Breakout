@@ -5,7 +5,13 @@ Set-Location -LiteralPath (git rev-parse --show-toplevel)
 
 # 1) CSharpier: sadece check (yazmaz)
 Write-Host "🔎 CSharpier (check)"
-dotnet csharpier check .
+# Sadece staged C# dosyalarını tara (yoksa tüm repo)
+$staged = git diff --cached --name-only --diff-filter=ACM | Where-Object { $_ -like "*.cs" }
+if ($staged) {
+  dotnet csharpier check $staged
+} else {
+  dotnet csharpier check .
+}
 
 # .sln ya da .csproj bul
 $solution = Get-ChildItem -Filter *.sln -File | Select-Object -First 1
