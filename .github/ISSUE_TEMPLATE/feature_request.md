@@ -1,20 +1,26 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: eneskrtnc
-
+name: Özellik (Feature) isteği
+about: Yeni işlev veya geliştirme talebi
+labels: enhancement
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## Sorun / Amaç
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+Neyi çözmek istiyoruz?
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+## Önerilen Çözüm
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+Kısa teknik notlar, kabul kriterleri (AC).
+
+## Kapsam Dışı
+
+Bu issue kapsamında yapmayacaklarımız.
+
+## Kabul Kriterleri (AC)
+
+- [ ] …
+- [ ] …
+
+## Test Adımları
+
+- [ ] …
