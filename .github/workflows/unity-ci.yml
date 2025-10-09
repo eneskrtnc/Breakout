@@ -41,6 +41,20 @@ jobs:
           [ -n "$UNITY_SERIAL" ]   || { echo "UNITY_SERIAL eksik"; exit 1; }
           echo "OK: Pro/Student lisans bilgileri env'de mevcut (maskeli)."
 
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: |
+            Library
+            .unityconfig
+          key: library-${{ runner.os }}-6000.2.2f1-${{ hashFiles('Packages/packages-lock.json') }}
+          restore-keys: |
+            library-${{ runner.os }}-6000.2.2f1-
+
+      - name: Verify cache hit
+        run: |
+          if [ -d "Library" ]; then echo "Library cache present."; else echo "No Library cache."; fi
+
       # Asıl build
       - name: Build (Unity Development)
         id: build
