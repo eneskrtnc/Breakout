@@ -1,6 +1,6 @@
 // Assets/Scripts/ShipSmokeTest.cs
-using UnityEngine;
 using SpaceTrader.Data;
+using UnityEngine;
 
 public class ShipSmokeTest : MonoBehaviour
 {
@@ -14,7 +14,8 @@ public class ShipSmokeTest : MonoBehaviour
         if (def?.prefabRef != null)
         {
             var prefab = await def.prefabRef.LoadAssetAsync<GameObject>().Task;
-            if (prefab) Instantiate(prefab, Vector3.zero, Quaternion.identity);
+            if (prefab)
+                Instantiate(prefab, Vector3.zero, Quaternion.identity);
         }
     }
 }

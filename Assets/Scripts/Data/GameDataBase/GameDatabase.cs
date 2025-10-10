@@ -1,21 +1,20 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;   // önemli
+using System.Linq.Expressions; // önemli
 using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using System.Collections;
 using UnityEngine.ResourceManagement.ResourceLocations;
 
 namespace SpaceTrader.Data
 {
-
     public static class GameDatabase
     {
-
-        public static DatabaseHealth Health { get; private set; } = new DatabaseHealth { State = DatabaseState.NotStarted };
+        public static DatabaseHealth Health { get; private set; } =
+            new DatabaseHealth { State = DatabaseState.NotStarted };
 
         private static readonly Dictionary<Type, object> _sets = new();
 
@@ -23,22 +22,31 @@ namespace SpaceTrader.Data
 
         public static async Task InitAsync()
         {
-            if (IsInitialized) return;
+            if (IsInitialized)
+                return;
 
             await Addressables.InitializeAsync().Task;
 
-            var defTypes = AppDomain.CurrentDomain.GetAssemblies()
+            var defTypes = AppDomain
+                .CurrentDomain.GetAssemblies()
                 .SelectMany(a =>
                 {
-                    try { return a.GetTypes(); }
-                    catch (ReflectionTypeLoadException e) { return e.Types.Where(t => t != null); }
+                    try
+                    {
+                        return a.GetTypes();
+                    }
+                    catch (ReflectionTypeLoadException e)
+                    {
+                        return e.Types.Where(t => t != null);
+                    }
                 })
                 .Where(t => t != null && !t.IsAbstract && typeof(BaseDef).IsAssignableFrom(t))
                 .ToArray();
 
             foreach (var t in defTypes)
             {
-                var label = t.GetCustomAttribute<DataLabelAttribute>()?.Label ?? DefaultLabelForType(t);
+                var label =
+                    t.GetCustomAttribute<DataLabelAttribute>()?.Label ?? DefaultLabelForType(t);
                 await LoadTypeIntoSet(t, label);
             }
 
@@ -46,15 +54,18 @@ namespace SpaceTrader.Data
             Debug.Log($"[GameDB] Initialized with {_sets.Count} def sets.");
         }
 
-        public static DefSet<T> Set<T>() where T : BaseDef
-            => _sets.TryGetValue(typeof(T), out var boxed) ? (DefSet<T>)boxed : new DefSet<T>();
+        public static DefSet<T> Set<T>()
+            where T : BaseDef =>
+            _sets.TryGetValue(typeof(T), out var boxed) ? (DefSet<T>)boxed : new DefSet<T>();
 
-        public static T Get<T>(string id) where T : BaseDef => Set<T>().Get(id);
+        public static T Get<T>(string id)
+            where T : BaseDef => Set<T>().Get(id);
 
         private static string DefaultLabelForType(Type t)
         {
             var n = t.Name;
-            if (n.EndsWith("Def", StringComparison.OrdinalIgnoreCase)) n = n[..^3];
+            if (n.EndsWith("Def", StringComparison.OrdinalIgnoreCase))
+                n = n[..^3];
             return n.ToLowerInvariant() + "s"; // ShipDef -> ships
         }
 
@@ -77,18 +88,25 @@ namespace SpaceTrader.Data
 
             if (locations == null || locations.Count == 0)
             {
-                UnityEngine.Debug.LogWarning($"[GameDB] No assets for label='{label}' and type='{t.Name}'. " +
-                                             $"(Asset'lere '{label}' label'ını verdin mi?)");
+                UnityEngine.Debug.LogWarning(
+                    $"[GameDB] No assets for label='{label}' and type='{t.Name}'. "
+                        + $"(Asset'lere '{label}' label'ını verdin mi?)"
+                );
 
                 var setType = typeof(DefSet<>).MakeGenericType(t);
                 var emptySet = System.Activator.CreateInstance(setType);
-                setType.GetMethod("Replace")!.Invoke(emptySet, new object[] { System.Array.CreateInstance(t, 0) });
+                setType
+                    .GetMethod("Replace")!
+                    .Invoke(emptySet, new object[] { System.Array.CreateInstance(t, 0) });
                 _sets[t] = emptySet!;
                 return;
             }
 
             // 2) Uygun LoadAssetsAsync<T> overload’ını seç: IList<>/IEnumerable<> ya da object
-            var methods = typeof(Addressables).GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+            var methods = typeof(Addressables)
+                .GetMethods(
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static
+                )
                 .Where(m => m.Name == "LoadAssetsAsync" && m.IsGenericMethodDefinition);
 
             var ilistResLoc = typeof(IList<>).MakeGenericType(typeof(IResourceLocation));
@@ -98,7 +116,8 @@ namespace SpaceTrader.Data
             foreach (var m in methods)
             {
                 var ps = m.GetParameters();
-                if (ps.Length != 2) continue;
+                if (ps.Length != 2)
+                    continue;
                 var p0 = ps[0].ParameterType;
                 if (p0.IsGenericType)
                 {
@@ -121,7 +140,9 @@ namespace SpaceTrader.Data
                     return ps.Length == 2 && ps[0].ParameterType == typeof(object);
                 });
                 if (selected == null)
-                    throw new System.InvalidOperationException("Addressables.LoadAssetsAsync uygun overload bulunamadı.");
+                    throw new System.InvalidOperationException(
+                        "Addressables.LoadAssetsAsync uygun overload bulunamadı."
+                    );
                 useObjectKey = true;
             }
 

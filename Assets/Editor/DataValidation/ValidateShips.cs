@@ -22,12 +22,18 @@ public static class ValidateShips
         };
 
         // Domain'e özgü kurallar: hp>0, cargo>=0, speed>0
-        ValidationCore.ValidateDefs<ShipDef>(cfg, (ship, ctx) =>
-        {
-            if (ship.hp <= 0) ctx.Warn(ship, $"hp > 0 olmalı (şu an: {ship.hp})");
-            if (ship.cargo < 0) ctx.Warn(ship, $"cargo ≥ 0 olmalı (şu an: {ship.cargo})");
-            if (ship.speed <= 0f) ctx.Warn(ship, $"speed > 0 olmalı (şu an: {ship.speed})");
-        });
+        ValidationCore.ValidateDefs<ShipDef>(
+            cfg,
+            (ship, ctx) =>
+            {
+                if (ship.hp <= 0)
+                    ctx.Warn(ship, $"hp > 0 olmalı (şu an: {ship.hp})");
+                if (ship.cargo < 0)
+                    ctx.Warn(ship, $"cargo ≥ 0 olmalı (şu an: {ship.cargo})");
+                if (ship.speed <= 0f)
+                    ctx.Warn(ship, $"speed > 0 olmalı (şu an: {ship.speed})");
+            }
+        );
     }
 
     // (Opsiyonel) Menü sadece ShipDef varsa aktif olsun:

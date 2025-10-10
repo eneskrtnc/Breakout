@@ -6,7 +6,9 @@ namespace SpaceTrader.Data
     {
         public string id;
         public string displayName;
-        [TextArea] public string desc;
+
+        [TextArea]
+        public string desc;
         public string[] tags;
 
 #if UNITY_EDITOR
@@ -22,6 +24,7 @@ namespace SpaceTrader.Data
     public sealed class DataLabelAttribute : System.Attribute
     {
         public readonly string Label;
+
         public DataLabelAttribute(string label) => Label = label;
     }
 }

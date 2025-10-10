@@ -16,12 +16,12 @@ namespace SpaceTrader.EditorValidation
     [Serializable]
     public class DomainConfig
     {
-        public string DomainName;          // "Ships"
-        public string Label;               // "ships"
-        public string DefAddressPrefix;    // "ships/defs/"
-        public string IconAddressPrefix;   // "ships/icons/"  (null => kontrol etme)
+        public string DomainName; // "Ships"
+        public string Label; // "ships"
+        public string DefAddressPrefix; // "ships/defs/"
+        public string IconAddressPrefix; // "ships/icons/"  (null => kontrol etme)
         public string PrefabAddressPrefix; // "ships/prefabs/"(null => kontrol etme)
-        public string TypeNameOverride;    // t: filtrelemesi için (boşsa generic T)
+        public string TypeNameOverride; // t: filtrelemesi için (boşsa generic T)
     }
 
     public class ValidationContext
@@ -29,41 +29,61 @@ namespace SpaceTrader.EditorValidation
         public int Errors;
         public int Warnings;
         public UnityEngine.Object FirstToPing;
-        public readonly Dictionary<string, List<ScriptableObject>> IdMap = new(StringComparer.Ordinal);
+        public readonly Dictionary<string, List<ScriptableObject>> IdMap = new(
+            StringComparer.Ordinal
+        );
 
         public void Error(UnityEngine.Object ctx, string msg)
         {
             Errors++;
-            if (ctx) Debug.LogError($"[Validate] {msg}", ctx); else Debug.LogError($"[Validate] {msg}");
-            if (FirstToPing == null && ctx != null) FirstToPing = ctx;
+            if (ctx)
+                Debug.LogError($"[Validate] {msg}", ctx);
+            else
+                Debug.LogError($"[Validate] {msg}");
+            if (FirstToPing == null && ctx != null)
+                FirstToPing = ctx;
         }
 
         public void Warn(UnityEngine.Object ctx, string msg)
         {
             Warnings++;
-            if (ctx) Debug.LogWarning($"[Validate] {msg}", ctx); else Debug.LogWarning($"[Validate] {msg}");
+            if (ctx)
+                Debug.LogWarning($"[Validate] {msg}", ctx);
+            else
+                Debug.LogWarning($"[Validate] {msg}");
         }
     }
 
     public static class ValidationCore
     {
-        public static (int errors, int warnings, int checkedCount, UnityEngine.Object firstToPing)
-            ValidateDefs<TDef>(
-                DomainConfig cfg,
-                Action<TDef, ValidationContext> perItemRules = null
-            ) where TDef : ScriptableObject
+        public static (
+            int errors,
+            int warnings,
+            int checkedCount,
+            UnityEngine.Object firstToPing
+        ) ValidateDefs<TDef>(DomainConfig cfg, Action<TDef, ValidationContext> perItemRules = null)
+            where TDef : ScriptableObject
         {
             var ctx = new ValidationContext();
 
             var settings = AddressableAssetSettingsDefaultObject.Settings;
             if (settings == null)
             {
-                ctx.Error(null, "Addressables Settings bulunamadı. Window → Asset Management → Addressables ile oluşturun.");
-                EditorUtility.DisplayDialog($"Validate {cfg.DomainName}", "Addressables Settings yok.", "Kapat");
+                ctx.Error(
+                    null,
+                    "Addressables Settings bulunamadı. Window → Asset Management → Addressables ile oluşturun."
+                );
+                EditorUtility.DisplayDialog(
+                    $"Validate {cfg.DomainName}",
+                    "Addressables Settings yok.",
+                    "Kapat"
+                );
                 return (ctx.Errors, ctx.Warnings, 0, ctx.FirstToPing);
             }
 
-            string typeName = string.IsNullOrEmpty(cfg.TypeNameOverride) ? typeof(TDef).Name : cfg.TypeNameOverride;
+            string typeName = string.IsNullOrEmpty(cfg.TypeNameOverride)
+                ? typeof(TDef).Name
+                : cfg.TypeNameOverride;
             string[] guids = AssetDatabase.FindAssets($"t:{typeName}");
             int checkedCount = guids.Length;
 
@@ -99,20 +119,44 @@ namespace SpaceTrader.EditorValidation
                 // ---- ShipDef kaydının kendisi için addressables kontrolü (defPrefix varsa)
                 if (!string.IsNullOrEmpty(cfg.DefAddressPrefix))
                 {
-                    ValidateAddressablesEntry(settings, guid, cfg.Label, cfg.DefAddressPrefix + id, def, true, ctx);
+                    ValidateAddressablesEntry(
+                        settings,
+                        guid,
+                        cfg.Label,
+                        cfg.DefAddressPrefix + id,
+                        def,
+                        true,
+                        ctx
+                    );
                 }
 
                 // ---- iconRef/prefabRef (opsiyonel config)
                 if (!string.IsNullOrEmpty(cfg.IconAddressPrefix))
                 {
                     var iconRef = GetAssetReference(def, "iconRef");
-                    ValidateAssetReference(settings, iconRef, cfg.Label, cfg.IconAddressPrefix + id, def, "iconRef", ctx);
+                    ValidateAssetReference(
+                        settings,
+                        iconRef,
+                        cfg.Label,
+                        cfg.IconAddressPrefix + id,
+                        def,
+                        "iconRef",
+                        ctx
+                    );
                 }
 
                 if (!string.IsNullOrEmpty(cfg.PrefabAddressPrefix))
                 {
                     var prefabRef = GetAssetReference(def, "prefabRef");
-                    ValidateAssetReference(settings, prefabRef, cfg.Label, cfg.PrefabAddressPrefix + id, def, "prefabRef", ctx);
+                    ValidateAssetReference(
+                        settings,
+                        prefabRef,
+                        cfg.Label,
+                        cfg.PrefabAddressPrefix + id,
+                        def,
+                        "prefabRef",
+                        ctx
+                    );
                 }
 
                 // ---- Domain'e özgü kurallar
@@ -153,7 +197,8 @@ namespace SpaceTrader.EditorValidation
                     $"Hatalar bulundu! ({ctx.Errors} hata, {ctx.Warnings} uyarı)\nDetaylar Console'da.",
                     "Tamam"
                 );
-                if (ctx.FirstToPing) EditorGUIUtility.PingObject(ctx.FirstToPing);
+                if (ctx.FirstToPing)
+                    EditorGUIUtility.PingObject(ctx.FirstToPing);
             }
 
             return (ctx.Errors, ctx.Warnings, checkedCount, ctx.FirstToPing);
@@ -192,7 +237,10 @@ namespace SpaceTrader.EditorValidation
                 ctx.Error(ctxObj, $"Label eksik: '{requiredLabel}'.");
 
             if (!string.Equals(entry.address, expectedAddress, StringComparison.Ordinal))
-                ctx.Warn(ctxObj, $"Adres beklenen değil. Şu an: '{entry.address}', Beklenen: '{expectedAddress}'.");
+                ctx.Warn(
+                    ctxObj,
+                    $"Adres beklenen değil. Şu an: '{entry.address}', Beklenen: '{expectedAddress}'."
+                );
         }
 
         private static void ValidateAssetReference(
@@ -221,7 +269,10 @@ namespace SpaceTrader.EditorValidation
                 ctx.Error(ctxObj, $"{fieldName}: Label '{requiredLabel}' eksik.");
 
             if (!string.Equals(entry.address, expectedAddress, StringComparison.Ordinal))
-                ctx.Warn(ctxObj, $"{fieldName}: Adres beklenen değil. Şu an: '{entry.address}', Beklenen: '{expectedAddress}'.");
+                ctx.Warn(
+                    ctxObj,
+                    $"{fieldName}: Adres beklenen değil. Şu an: '{entry.address}', Beklenen: '{expectedAddress}'."
+                );
         }
     }
 }
