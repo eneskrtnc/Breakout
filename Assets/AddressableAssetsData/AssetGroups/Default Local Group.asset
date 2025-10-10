@@ -13,29 +13,22 @@ MonoBehaviour:
   m_Name: Default Local Group
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Default Local Group
-  m_GUID: d23e06fb93925564596dae6cf9b6a94d
+  m_GUID: 304f8f598c575b84397800d56937a156
   m_SerializeEntries:
-  - m_GUID: 0cb22ce9a25489e47abfb0bf8fe7a3fd
-    m_Address: ships/icons/starter_ship
+  - m_Address: ships/icons/starter_ship
     m_ReadOnly: 0
     m_SerializedLabels:
     - ships
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 69cb2edd6f3add34aa1ff99d0750e7f4
-    m_Address: ships/defs/starter_ship
+  - m_Address: ships/defs/starter_ship
     m_ReadOnly: 0
     m_SerializedLabels:
     - ships
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c0e00337f6babae45b5efecc2addefc3
-    m_Address: ships/prefabs/starter_ship
+  - m_Address: ships/prefabs/startership.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
     - ships
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 0afdbfc70e08f3d42be1f39755da1723, type: 2}
-  m_SchemaSet:
-    m_Schemas:
-    - {fileID: 11400000, guid: 25419ff6bedc0644fa1963606150b0ea, type: 2}
-    - {fileID: 11400000, guid: 2bd82913540009041b63e17af60bda4a, type: 2}
