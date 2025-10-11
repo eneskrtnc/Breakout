@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Default Local Group
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Default Local Group
-  m_GUID: 304f8f598c575b84397800d56937a156
+  m_GUID: 62ce36b63e2cd094cbee045d288b156d
   m_SerializeEntries:
   - m_Address: ships/icons/starter_ship
     m_ReadOnly: 0
@@ -25,7 +25,7 @@ MonoBehaviour:
     m_SerializedLabels:
     - ships
     FlaggedDuringContentUpdateRestriction: 0
-  - m_Address: ships/prefabs/startership.prefab
+  - m_Address: ships/prefabs/starter_ship
     m_ReadOnly: 0
     m_SerializedLabels:
     - ships
