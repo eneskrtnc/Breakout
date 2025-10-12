@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Default Local Group
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Default Local Group
-  m_GUID: 62ce36b63e2cd094cbee045d288b156d
+  m_GUID: 8e982d1efac68244388926349fb50906
   m_SerializeEntries:
   - m_Address: ships/icons/starter_ship
     m_ReadOnly: 0
