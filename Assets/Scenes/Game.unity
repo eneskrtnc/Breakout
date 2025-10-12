@@ -350,6 +350,8 @@ GameObject:
   m_Component:
   - component: {fileID: 860958485}
   - component: {fileID: 860958486}
+  - component: {fileID: 860958487}
+  - component: {fileID: 860958488}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -384,6 +386,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 890470ea78f70fd49a3958e8916b196c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  database: {fileID: 11400000, guid: 7479f346cc2ebda41ac9edce0a9e83b1, type: 2}
+  verboseLog: 1
+--- !u!114 &860958487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860958483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd19e1c02521d8a40b5036d79ab987ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShipSmokeTest
+  shipId: starter_ship
+--- !u!114 &860958488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860958483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dde108b72f04674e84ad1e440442be1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpaceTrader.Game.Runtime.Services.AssetService
+  database: {fileID: 11400000, guid: 7479f346cc2ebda41ac9edce0a9e83b1, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

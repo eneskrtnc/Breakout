@@ -11,7 +11,7 @@ using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace SpaceTrader.EditorValidation
+namespace SpaceTrader.Editor.DataValidation
 {
     [Serializable]
     public class DomainConfig

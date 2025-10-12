@@ -10,14 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Default Local Group
+  m_Name: Data
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: Default Local Group
-  m_GUID: ff59525f13ef4e84e8e1d92a647d30cb
+  m_GroupName: Data
+  m_GUID: 50c247fb12fb1ba44a0764ae3b59cd4d
   m_SerializeEntries:
-  - m_Address: Assets/Prefabs/Ships/starter_ship.prefab
+  - m_Address: data/starter_ship
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - data
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_Address: data/GameDatabase
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - data
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_Address: data/ShipCatalog
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - data
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 0afdbfc70e08f3d42be1f39755da1723, type: 2}

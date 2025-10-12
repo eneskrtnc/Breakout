@@ -13,14 +13,9 @@ MonoBehaviour:
   m_Name: Ships
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Ships
-  m_GUID: b4c63a2620ed5ec46add4fe41e837968
+  m_GUID: 40799d191cccfab4aba56f23dc72e903
   m_SerializeEntries:
   - m_Address: ships/icons/starter_ship
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - ships
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_Address: ships/defs/starter_ship
     m_ReadOnly: 0
     m_SerializedLabels:
     - ships

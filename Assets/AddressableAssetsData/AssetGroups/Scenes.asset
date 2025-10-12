@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Default Local Group
+  m_Name: Scenes
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: Default Local Group
-  m_GUID: ff59525f13ef4e84e8e1d92a647d30cb
+  m_GroupName: Scenes
+  m_GUID: f90b446eb055138449debbbb42afd580
   m_SerializeEntries:
-  - m_Address: Assets/Prefabs/Ships/starter_ship.prefab
+  - m_Address: scenes/Game
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - scenes
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 0afdbfc70e08f3d42be1f39755da1723, type: 2}
