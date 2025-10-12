@@ -10,10 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Default Local Group
+  m_Name: Ships
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: Default Local Group
-  m_GUID: 5ede413ac0538274a9160331100c8093
-  m_SerializeEntries: []
+  m_GroupName: Ships
+  m_GUID: b4c63a2620ed5ec46add4fe41e837968
+  m_SerializeEntries:
+  - m_Address: ships/icons/starter_ship
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ships
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_Address: ships/defs/starter_ship
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ships
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_Address: ships/prefabs/starter_ship
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ships
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 0afdbfc70e08f3d42be1f39755da1723, type: 2}
