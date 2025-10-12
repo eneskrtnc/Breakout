@@ -14,14 +14,19 @@ namespace SpaceTrader.Game.Data
             _map = new Dictionary<string, GameDef>(defs.Count);
             foreach (var d in defs)
             {
-                if (!d || string.IsNullOrWhiteSpace(d.id)) continue;
+                if (!d || string.IsNullOrWhiteSpace(d.id))
+                    continue;
                 _map[d.id] = d;
             }
         }
 
         public bool TryGet(string id, out GameDef def)
         {
-            if (_map == null) { def = null; return false; }
+            if (_map == null)
+            {
+                def = null;
+                return false;
+            }
             return _map.TryGetValue(id, out def);
         }
 

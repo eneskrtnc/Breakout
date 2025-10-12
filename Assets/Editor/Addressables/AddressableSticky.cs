@@ -1,6 +1,5 @@
 // Assets/Scripts/Editor/Addressables/AddressablesSticky.cs
 #if UNITY_EDITOR
-using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEditor.AddressableAssets;
@@ -41,11 +40,13 @@ namespace SpaceTrader.Editor.Addressables
 
         private static AddressableAssetSettings FindOrCreateSettingsAsset()
         {
-            const string defaultPath = "Assets/AddressableAssetsData/AddressableAssetSettings.asset";
+            const string defaultPath =
+                "Assets/AddressableAssetsData/AddressableAssetSettings.asset";
 
             // 1) Varsayılan yerde var mı?
             var settings = AssetDatabase.LoadAssetAtPath<AddressableAssetSettings>(defaultPath);
-            if (settings) return settings;
+            if (settings)
+                return settings;
 
             // 2) Projede herhangi bir yerde var mı?
             var guids = AssetDatabase.FindAssets("t:AddressableAssetSettings");
@@ -53,7 +54,8 @@ namespace SpaceTrader.Editor.Addressables
             {
                 var path = AssetDatabase.GUIDToAssetPath(guids[0]);
                 settings = AssetDatabase.LoadAssetAtPath<AddressableAssetSettings>(path);
-                if (settings) return settings;
+                if (settings)
+                    return settings;
             }
 
             // 3) Yoksa oluştur

@@ -4,6 +4,7 @@
 #if UNITY_EDITOR
 using UnityEditor;
 using SpaceTrader.Game.Data; // <-- ShipDef'in gerçek namespace'i buysa bırak; farklıysa kendi namespace'inle değiştir.
+
 namespace SpaceTrader.Editor.DataValidation
 {
     public static class ValidateShips

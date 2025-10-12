@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.ResourceLocations;
 
 namespace SpaceTrader.Game.Data
 {
@@ -18,10 +17,12 @@ namespace SpaceTrader.Game.Data
         public List<GameCatalog> catalogs = new();
 
         // GameDef hızlı erişim (id → GameDef)
-        [NonSerialized] Dictionary<string, GameDef> _byId;
+        [NonSerialized]
+        Dictionary<string, GameDef> _byId;
 
         // BaseDef set’leri (type → DefSet<T>)
-        [NonSerialized] readonly Dictionary<Type, object> _sets = new();
+        [NonSerialized]
+        readonly Dictionary<Type, object> _sets = new();
 
         public DatabaseHealth Health { get; private set; } =
             new DatabaseHealth { State = DatabaseState.NotStarted };
@@ -39,14 +40,17 @@ namespace SpaceTrader.Game.Data
         public void RebuildCatalogIndex()
         {
             _byId = new Dictionary<string, GameDef>(catalogs?.Count ?? 0);
-            if (catalogs == null) return;
+            if (catalogs == null)
+                return;
 
             foreach (var c in catalogs)
             {
-                if (!c) continue;
+                if (!c)
+                    continue;
                 foreach (var d in c.All)
                 {
-                    if (!d || string.IsNullOrWhiteSpace(d.id)) continue;
+                    if (!d || string.IsNullOrWhiteSpace(d.id))
+                        continue;
                     _byId[d.id] = d;
                 }
             }
@@ -55,27 +59,33 @@ namespace SpaceTrader.Game.Data
         /// <summary>id→GameDef (Catalog tabanlı kısayol)</summary>
         public bool TryGet(string id, out GameDef def)
         {
-            if (_byId == null) { def = null; return false; }
+            if (_byId == null)
+            {
+                def = null;
+                return false;
+            }
             return _byId.TryGetValue(id, out def);
         }
 
         /// <summary>Addressables’tan tüm BaseDef türevlerini etikete göre yükleyip set’leri kurar.</summary>
         public async Task InitAsync()
         {
-            if (IsInitialized) return;
+            if (IsInitialized)
+                return;
 
             Health.State = DatabaseState.Initializing;
             await Addressables.InitializeAsync().Task;
 
-            var defTypes = AppDomain.CurrentDomain
-                .GetAssemblies()
+            var defTypes = AppDomain
+                .CurrentDomain.GetAssemblies()
                 .SelectMany(GetTypesSafe)
                 .Where(t => t != null && !t.IsAbstract && typeof(BaseDef).IsAssignableFrom(t))
                 .ToArray();
 
             foreach (var t in defTypes)
             {
-                var label = t.GetCustomAttribute<DataLabelAttribute>()?.Label ?? DefaultLabelForType(t);
+                var label =
+                    t.GetCustomAttribute<DataLabelAttribute>()?.Label ?? DefaultLabelForType(t);
                 await LoadTypeIntoSet(t, label);
             }
 
@@ -85,18 +95,26 @@ namespace SpaceTrader.Game.Data
         }
 
         /// <summary>T türü için set al (yoksa boş set döner).</summary>
-        public DefSet<T> Set<T>() where T : BaseDef =>
+        public DefSet<T> Set<T>()
+            where T : BaseDef =>
             _sets.TryGetValue(typeof(T), out var boxed) ? (DefSet<T>)boxed : new DefSet<T>();
 
         /// <summary>Id ile T tipindeki def’i getir (set içinde).</summary>
-        public T Get<T>(string id) where T : BaseDef => Set<T>().Get(id);
+        public T Get<T>(string id)
+            where T : BaseDef => Set<T>().Get(id);
 
         // ----------------- Helpers -----------------
 
         static IEnumerable<Type> GetTypesSafe(Assembly a)
         {
-            try { return a.GetTypes(); }
-            catch (ReflectionTypeLoadException e) { return e.Types.Where(t => t != null)!; }
+            try
+            {
+                return a.GetTypes();
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                return e.Types.Where(t => t != null)!;
+            }
         }
 
         static string DefaultLabelForType(Type t)
@@ -126,25 +144,31 @@ namespace SpaceTrader.Game.Data
 
             if (locations == null || locations.Count == 0)
             {
-                Debug.LogWarning($"[GameDB] No assets for label='{label}' and type='{t.Name}'. (Label verdin mi?)");
+                Debug.LogWarning(
+                    $"[GameDB] No assets for label='{label}' and type='{t.Name}'. (Label verdin mi?)"
+                );
 
                 var emptySetType = typeof(DefSet<>).MakeGenericType(t);
                 var emptySet = Activator.CreateInstance(emptySetType);
-                emptySetType.GetMethod("Replace")!
+                emptySetType
+                    .GetMethod("Replace")!
                     .Invoke(emptySet, new object[] { Array.CreateInstance(t, 0) });
                 _sets[t] = emptySet!;
                 return;
             }
 
             // 3) Addressables.LoadAssetsAsync<T>(IEnumerable<IResourceLocation>, Action<T>)
-            var loadAssetsGeneric = typeof(Addressables).GetMethods(BindingFlags.Public | BindingFlags.Static)
+            var loadAssetsGeneric = typeof(Addressables)
+                .GetMethods(BindingFlags.Public | BindingFlags.Static)
                 .Where(m => m.Name == "LoadAssetsAsync" && m.IsGenericMethodDefinition)
                 .FirstOrDefault(m =>
                 {
                     var ps = m.GetParameters();
-                    if (ps.Length != 2) return false;
+                    if (ps.Length != 2)
+                        return false;
                     var p0 = ps[0].ParameterType;
-                    if (!p0.IsGenericType) return false;
+                    if (!p0.IsGenericType)
+                        return false;
                     var gtd = p0.GetGenericTypeDefinition();
                     return gtd == typeof(IEnumerable<>) || gtd == typeof(IList<>);
                 });
@@ -153,10 +177,12 @@ namespace SpaceTrader.Game.Data
             bool useObjectKey = false;
             if (loadAssetsGeneric == null)
             {
-                loadAssetsGeneric = typeof(Addressables).GetMethods(BindingFlags.Public | BindingFlags.Static)
+                loadAssetsGeneric = typeof(Addressables)
+                    .GetMethods(BindingFlags.Public | BindingFlags.Static)
                     .FirstOrDefault(m =>
                     {
-                        if (m.Name != "LoadAssetsAsync" || !m.IsGenericMethodDefinition) return false;
+                        if (m.Name != "LoadAssetsAsync" || !m.IsGenericMethodDefinition)
+                            return false;
                         var ps = m.GetParameters();
                         return ps.Length == 2 && ps[0].ParameterType == typeof(object);
                     });
@@ -164,7 +190,9 @@ namespace SpaceTrader.Game.Data
             }
 
             if (loadAssetsGeneric == null)
-                throw new InvalidOperationException("Addressables.LoadAssetsAsync için uygun overload bulunamadı.");
+                throw new InvalidOperationException(
+                    "Addressables.LoadAssetsAsync için uygun overload bulunamadı."
+                );
 
             var loadAssetsT = loadAssetsGeneric.MakeGenericMethod(t);
 
@@ -204,14 +232,16 @@ namespace SpaceTrader.Game.Data
         {
             get
             {
-                if (_instance) return _instance;
+                if (_instance)
+                    return _instance;
 #if UNITY_EDITOR
                 var guids = UnityEditor.AssetDatabase.FindAssets("t:GameDatabase");
                 if (guids.Length > 0)
                 {
                     var path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
                     _instance = UnityEditor.AssetDatabase.LoadAssetAtPath<GameDatabase>(path);
-                    if (_instance) return _instance;
+                    if (_instance)
+                        return _instance;
                 }
 #endif
                 _instance = Resources.Load<GameDatabase>("GameDatabase");

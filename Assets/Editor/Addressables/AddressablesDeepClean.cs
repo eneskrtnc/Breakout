@@ -16,23 +16,35 @@ namespace SpaceTrader.Editor.Addressables
         public static void DeepCleanBrokenEntries()
         {
             var s = AddressableAssetSettingsDefaultObject.Settings;
-            if (!s) { Debug.LogError("[AddrClean] No Addressables settings."); return; }
+            if (!s)
+            {
+                Debug.LogError("[AddrClean] No Addressables settings.");
+                return;
+            }
 
-            int removedNull = 0, fixedAddr = 0, removedMissing = 0;
+            int removedNull = 0,
+                fixedAddr = 0,
+                removedMissing = 0;
 
             foreach (var g in s.groups.Where(g => g != null))
             {
                 var so = new SerializedObject(g);
                 var entries = so.FindProperty("m_Entries");
-                if (entries == null) continue;
+                if (entries == null)
+                    continue;
 
                 // Tersten sil (index kaymasın)
                 for (int i = entries.arraySize - 1; i >= 0; i--)
                 {
                     var e = entries.GetArrayElementAtIndex(i);
-                    if (e == null) { entries.DeleteArrayElementAtIndex(i); removedNull++; continue; }
+                    if (e == null)
+                    {
+                        entries.DeleteArrayElementAtIndex(i);
+                        removedNull++;
+                        continue;
+                    }
 
-                    var guidProp    = e.FindPropertyRelative("m_GUID");
+                    var guidProp = e.FindPropertyRelative("m_GUID");
                     var addressProp = e.FindPropertyRelative("m_Address");
 
                     var guid = guidProp?.stringValue;
@@ -70,29 +82,53 @@ namespace SpaceTrader.Editor.Addressables
             s.SetDirty(AddressableAssetSettings.ModificationEvent.EntryModified, null, true);
             AssetDatabase.SaveAssets();
 
-            Debug.Log($"[AddrClean] Removed null: {removedNull}, removed missing: {removedMissing}, fixed addresses: {fixedAddr}");
+            Debug.Log(
+                $"[AddrClean] Removed null: {removedNull}, removed missing: {removedMissing}, fixed addresses: {fixedAddr}"
+            );
         }
 
         [MenuItem("Tools/Addressables/Deep Clean → Reset All Groups (KEEP Settings)")]
         public static void ResetAllGroupsKeepSettings()
         {
             var s = AddressableAssetSettingsDefaultObject.Settings;
-            if (!s) { Debug.LogError("[AddrClean] No Addressables settings."); return; }
+            if (!s)
+            {
+                Debug.LogError("[AddrClean] No Addressables settings.");
+                return;
+            }
 
             // Tüm grupları kaldır
             foreach (var g in s.groups.ToList())
             {
-                if (g != null) s.RemoveGroup(g);
+                if (g != null)
+                    s.RemoveGroup(g);
             }
 
             // Varsayılan grup ve şemaları geri kur
-            var def = s.CreateGroup("Default Local Group", false, false, false, null,
-                typeof(BundledAssetGroupSchema), typeof(ContentUpdateGroupSchema));
+            var def = s.CreateGroup(
+                "Default Local Group",
+                false,
+                false,
+                false,
+                null,
+                typeof(BundledAssetGroupSchema),
+                typeof(ContentUpdateGroupSchema)
+            );
             s.DefaultGroup = def;
 
-            var schema = def.GetSchema<BundledAssetGroupSchema>() ?? def.AddSchema<BundledAssetGroupSchema>();
-            EnsureProfileVar(s, "LocalBuildPath", "{UnityEngine.AddressableAssets.Addressables.BuildPath}/[BuildTarget]");
-            EnsureProfileVar(s, "LocalLoadPath",  "{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]");
+            var schema =
+                def.GetSchema<BundledAssetGroupSchema>()
+                ?? def.AddSchema<BundledAssetGroupSchema>();
+            EnsureProfileVar(
+                s,
+                "LocalBuildPath",
+                "{UnityEngine.AddressableAssets.Addressables.BuildPath}/[BuildTarget]"
+            );
+            EnsureProfileVar(
+                s,
+                "LocalLoadPath",
+                "{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]"
+            );
             schema.BuildPath.SetVariableByName(s, "LocalBuildPath");
             schema.LoadPath.SetVariableByName(s, "LocalLoadPath");
 
@@ -114,8 +150,10 @@ namespace SpaceTrader.Editor.Addressables
         {
             var ps = s.profileSettings;
             var cur = ps.GetValueByName(s.activeProfileId, name);
-            if (cur == null) ps.CreateValue(name, value);
-            else if (string.IsNullOrEmpty(cur)) ps.SetValue(s.activeProfileId, name, value);
+            if (cur == null)
+                ps.CreateValue(name, value);
+            else if (string.IsNullOrEmpty(cur))
+                ps.SetValue(s.activeProfileId, name, value);
         }
     }
 }

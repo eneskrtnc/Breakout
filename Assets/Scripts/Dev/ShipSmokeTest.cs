@@ -1,6 +1,6 @@
-using UnityEngine;
 using SpaceTrader.Game.Data;
 using SpaceTrader.Game.Runtime.Services;
+using UnityEngine;
 
 namespace SpaceTrader.Game.Dev
 {
@@ -14,7 +14,9 @@ namespace SpaceTrader.Game.Dev
             var db = GameDatabase.Instance;
             if (!db)
             {
-                Debug.LogError("[ShipSmokeTest] GameDatabase bulunamadı. DataBootstrap ve GameDatabase.asset ekli mi?");
+                Debug.LogError(
+                    "[ShipSmokeTest] GameDatabase bulunamadı. DataBootstrap ve GameDatabase.asset ekli mi?"
+                );
                 return;
             }
 
@@ -22,16 +24,23 @@ namespace SpaceTrader.Game.Dev
 
             if (AssetService.Instance == null)
             {
-                Debug.LogError("[ShipSmokeTest] AssetService sahnede yok. GameSystems objesine ekleyin.");
+                Debug.LogError(
+                    "[ShipSmokeTest] AssetService sahnede yok. GameSystems objesine ekleyin."
+                );
                 return;
             }
 
-            spawned = await AssetService.Instance.SpawnAsync(shipId, Vector3.zero, Quaternion.identity);
+            spawned = await AssetService.Instance.SpawnAsync(
+                shipId,
+                Vector3.zero,
+                Quaternion.identity
+            );
         }
 
         void OnDestroy()
         {
-            if (spawned) AssetService.Instance?.Despawn(spawned);
+            if (spawned)
+                AssetService.Instance?.Despawn(spawned);
         }
     }
 }

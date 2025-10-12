@@ -1,6 +1,6 @@
 // Assets/Scripts/Game/Runtime/Bootstrap/DataBootstrap.cs
-using UnityEngine;
 using SpaceTrader.Game.Data;
+using UnityEngine;
 
 namespace SpaceTrader.Game.Runtime.Bootstrap
 {
@@ -12,8 +12,11 @@ namespace SpaceTrader.Game.Runtime.Bootstrap
     [AddComponentMenu("SpaceTrader/Bootstrap/DataBootstrap")]
     public class DataBootstrap : MonoBehaviour
     {
-        [SerializeField] private GameDatabase database;   // GameDatabase.asset'i buraya sürükleyebilirsin
-        [SerializeField] private bool verboseLog = true;  // konsola durum yazsın mı?
+        [SerializeField]
+        private GameDatabase database; // GameDatabase.asset'i buraya sürükleyebilirsin
+
+        [SerializeField]
+        private readonly bool verboseLog = true; // konsola durum yazsın mı?
 
         private async void Awake()
         {
@@ -23,16 +26,20 @@ namespace SpaceTrader.Game.Runtime.Bootstrap
 
             if (!database)
             {
-                Debug.LogError("[DataBootstrap] GameDatabase asset bulunamadı. " +
-                               "Project'te GameDatabase.asset oluşturup bu bileşenin 'database' alanına atayın " +
-                               "ya da Resources/GameDatabase.asset olarak yerleştirin.");
+                Debug.LogError(
+                    "[DataBootstrap] GameDatabase asset bulunamadı. "
+                        + "Project'te GameDatabase.asset oluşturup bu bileşenin 'database' alanına atayın "
+                        + "ya da Resources/GameDatabase.asset olarak yerleştirin."
+                );
                 return;
             }
 
-            if (verboseLog) Debug.Log("[DataBootstrap] Initializing GameDatabase…");
+            if (verboseLog)
+                Debug.Log("[DataBootstrap] Initializing GameDatabase…");
             await database.InitAsync();
 
-            if (verboseLog) Debug.Log("[DataBootstrap] Database ready: " + database.Health);
+            if (verboseLog)
+                Debug.Log("[DataBootstrap] Database ready: " + database.Health);
         }
     }
 }
