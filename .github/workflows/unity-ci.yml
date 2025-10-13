@@ -33,11 +33,12 @@ jobs:
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
-          path: |
-            Library
-          key: library-${{ runner.os }}-${{ env.UNITY_VERSION }}-${{ hashFiles('Packages/packages-lock.json') }}
+          path: Library
+          key: library-${{ runner.os }}-${{ env.UNITY_VERSION }}-${{ hashFiles('ProjectSettings/ProjectVersion.txt', 'Packages/manifest.json', 'Packages/packages-lock.json') }}
           restore-keys: |
             library-${{ runner.os }}-${{ env.UNITY_VERSION }}-
+            library-${{ runner.os }}-
+
 
       - name: Build (Development)
         uses: game-ci/unity-builder@v4
@@ -54,11 +55,13 @@ jobs:
           customParameters: -nographics -quit
 
       - name: Package Development Build
+        if: github.event_name == 'workflow_dispatch'       # if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
         run: |
           mkdir -p exports
           zip -r "exports/dev_${GITHUB_SHA}.zip" build/StandaloneWindows64 > /dev/null
 
       - name: Upload Dev Artifact
+        if: github.event_name == 'workflow_dispatch'       # if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4
         with:
           name: dev-${{ github.sha }}
