@@ -6,14 +6,25 @@ namespace SpaceTrader.Core.Data
     public abstract class BaseDef : ScriptableObject, IKeyedDef
     {
         [Header("Identity")]
-        [SerializeField] private string id;                // "starter_ship"
-        [SerializeField] private string displayName = "";  // Oyuncuya görünen ad
-        [TextArea][SerializeField] private string desc = "";
-        [SerializeField] private string[] tags = System.Array.Empty<string>();
+        [SerializeField]
+        private readonly string id; // "starter_ship"
+
+        [SerializeField]
+        private readonly string displayName = ""; // Oyuncuya görünen ad
+
+        [TextArea]
+        [SerializeField]
+        private readonly string desc = "";
+
+        [SerializeField]
+        private readonly string[] tags = System.Array.Empty<string>();
 
         [Header("Presentation (2D)")]
-        [SerializeField] private Sprite icon;              // UI ikon
-        [SerializeField] private GameObject prefab;        // SpriteRenderer içeren prefab (2D)
+        [SerializeField]
+        private readonly Sprite icon; // UI ikon
+
+        [SerializeField]
+        private readonly GameObject prefab; // SpriteRenderer içeren prefab (2D)
 
         // ---- IKeyedDef sözleşmesi ----
         public string Id => id;
@@ -36,15 +47,21 @@ namespace SpaceTrader.Core.Data
             if (!string.IsNullOrEmpty(id))
             {
                 var ok = System.Text.RegularExpressions.Regex.IsMatch(id, "^[a-z0-9_]+$");
-                if (!ok) Debug.LogWarning($"[BaseDef] id '{id}' regex ile uyumlu değil (^[a-z0-9_]+$): {name}", this);
+                if (!ok)
+                    Debug.LogWarning(
+                        $"[BaseDef] id '{id}' regex ile uyumlu değil (^[a-z0-9_]+$): {name}",
+                        this
+                    );
             }
             else
             {
                 Debug.LogWarning($"[BaseDef] id boş: {name}", this);
             }
 
-            if (!prefab) Debug.LogWarning($"[BaseDef] prefab atanmadı: {name}", this);
-            if (!icon) Debug.LogWarning($"[BaseDef] icon atanmadı: {name}", this);
+            if (!prefab)
+                Debug.LogWarning($"[BaseDef] prefab atanmadı: {name}", this);
+            if (!icon)
+                Debug.LogWarning($"[BaseDef] icon atanmadı: {name}", this);
         }
 #endif
     }

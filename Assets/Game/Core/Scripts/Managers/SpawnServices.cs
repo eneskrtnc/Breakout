@@ -1,5 +1,5 @@
-using UnityEngine;
 using SpaceTrader.Core.Data;
+using UnityEngine;
 
 namespace SpaceTrader.Core
 {
@@ -10,14 +10,18 @@ namespace SpaceTrader.Core
 
         private void Awake()
         {
-            if (!factory) factory = FindFirstObjectByType<PrefabFactory>();
-            if (!defs) defs = FindFirstObjectByType<DefDatabase>();
+            if (!factory)
+                factory = FindFirstObjectByType<PrefabFactory>();
+            if (!defs)
+                defs = FindFirstObjectByType<DefDatabase>();
         }
 
-        public GameObject Spawn<TDef>(string id, Vector3 pos, Quaternion rot) where TDef : BaseDef
+        public GameObject Spawn<TDef>(string id, Vector3 pos, Quaternion rot)
+            where TDef : BaseDef
         {
             // Güvence: indeks hazır değilse hazırla
-            if (defs && !defs.IsReady) defs.BuildIndex();
+            if (defs && !defs.IsReady)
+                defs.BuildIndex();
 
             var def = defs ? defs.Get<TDef>(id) : null;
 
@@ -34,7 +38,8 @@ namespace SpaceTrader.Core
                 return null;
             }
 
-            if (factory) return factory.Spawn(def.Key, pos, rot);
+            if (factory)
+                return factory.Spawn(def.Key, pos, rot);
 
             if (!def.Prefab)
             {
@@ -46,9 +51,11 @@ namespace SpaceTrader.Core
 
         public GameObject SpawnByKey(string key, Vector3 pos, Quaternion rot)
         {
-            if (defs && !defs.IsReady) defs.BuildIndex();
+            if (defs && !defs.IsReady)
+                defs.BuildIndex();
 
-            if (factory) return factory.Spawn(key, pos, rot);
+            if (factory)
+                return factory.Spawn(key, pos, rot);
 
             var def = defs ? defs.GetByKey(key) : null;
             if (def?.Prefab == null)

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using SpaceTrader.Core.Data;
+using UnityEngine;
 
 namespace SpaceTrader.Core
 {
@@ -19,7 +19,11 @@ namespace SpaceTrader.Core
 
         private void Awake()
         {
-            if (Instance && Instance != this) { Destroy(gameObject); return; }
+            if (Instance && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
@@ -30,7 +34,8 @@ namespace SpaceTrader.Core
         private void Start()
         {
             // İsteğe bağlı: Start'ta da güvence olsun
-            if (!_isIndexed) BuildIndex();
+            if (!_isIndexed)
+                BuildIndex();
         }
 
         public void BuildIndex()
@@ -48,7 +53,8 @@ namespace SpaceTrader.Core
 
                 foreach (var def in cat.Enumerate())
                 {
-                    if (def == null || string.IsNullOrEmpty(def.Id)) continue;
+                    if (def == null || string.IsNullOrEmpty(def.Id))
+                        continue;
                     if (map.ContainsKey(def.Id))
                     {
                         Debug.LogError($"[DefDatabase] Duplicate id '{def.Id}' in {t.Name}");
@@ -59,14 +65,18 @@ namespace SpaceTrader.Core
             }
 
             _isIndexed = true;
-            Debug.Log($"[DefDatabase] Indexed types: {string.Join(", ", _byType.Keys.Select(x => x.Name))}");
+            Debug.Log(
+                $"[DefDatabase] Indexed types: {string.Join(", ", _byType.Keys.Select(x => x.Name))}"
+            );
         }
 
         public bool IsReady => _isIndexed;
 
-        public TDef Get<TDef>(string id) where TDef : BaseDef
+        public TDef Get<TDef>(string id)
+            where TDef : BaseDef
         {
-            if (string.IsNullOrEmpty(id)) return null;
+            if (string.IsNullOrEmpty(id))
+                return null;
             var t = typeof(TDef);
             if (_byType.TryGetValue(t, out var map) && map.TryGetValue(id, out var def))
                 return def as TDef;
@@ -75,9 +85,11 @@ namespace SpaceTrader.Core
 
         public BaseDef GetByKey(string key)
         {
-            if (string.IsNullOrEmpty(key)) return null;
+            if (string.IsNullOrEmpty(key))
+                return null;
             var dot = key.IndexOf('.');
-            if (dot <= 0 || dot >= key.Length - 1) return null;
+            if (dot <= 0 || dot >= key.Length - 1)
+                return null;
 
             var prefix = key.Substring(0, dot);
             var id = key.Substring(dot + 1);
@@ -86,10 +98,11 @@ namespace SpaceTrader.Core
             {
                 "ship" => typeof(ShipDef),
                 // "enemy" => typeof(EnemyDef),
-                _ => null
+                _ => null,
             };
 
-            if (t == null) return null;
+            if (t == null)
+                return null;
 
             if (_byType.TryGetValue(t, out var map) && map.TryGetValue(id, out var def))
                 return def;

@@ -9,7 +9,11 @@ namespace SpaceTrader.Core
 
         private void Awake()
         {
-            if (Instance && Instance != this) { Destroy(gameObject); return; }
+            if (Instance && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }

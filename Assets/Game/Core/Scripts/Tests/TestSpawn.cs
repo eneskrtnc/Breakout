@@ -1,5 +1,5 @@
-using UnityEngine;
 using SpaceTrader.Core;
+using UnityEngine;
 
 public class TestSpawn : MonoBehaviour
 {

@@ -29,7 +29,8 @@ namespace SpaceTrader.Core
         public IEnumerator UnloadContent(string sceneName)
         {
             var scn = SceneManager.GetSceneByName(sceneName);
-            if (!scn.isLoaded) yield break;
+            if (!scn.isLoaded)
+                yield break;
 
             yield return SceneManager.UnloadSceneAsync(sceneName);
             yield return Resources.UnloadUnusedAssets();
