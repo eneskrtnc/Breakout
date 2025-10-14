@@ -14,14 +14,12 @@ public static class BuildScript
     /// Scenes In Build'te işaretli sahneleri getirir; yoksa exception atar (CI kırmızıya düşer).
     private static string[] GetEnabledScenes()
     {
-        var scenes = EditorBuildSettings.scenes
-            .Where(s => s.enabled)
-            .Select(s => s.path)
-            .ToArray();
+        var scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray();
 
         if (scenes.Length == 0)
             throw new System.Exception(
-                "No scenes in Build Settings. Add Core/Zephyra and commit ProjectSettings/EditorBuildSettings.asset");
+                "No scenes in Build Settings. Add Core/Zephyra and commit ProjectSettings/EditorBuildSettings.asset"
+            );
 
         return scenes;
     }
@@ -34,9 +32,10 @@ public static class BuildScript
             scenes = GetEnabledScenes(),
             locationPathName = OutWin64,
             target = BuildTarget.StandaloneWindows64,
-            options = BuildOptions.Development
-                   | BuildOptions.AllowDebugging
-                   | BuildOptions.ConnectWithProfiler
+            options =
+                BuildOptions.Development
+                | BuildOptions.AllowDebugging
+                | BuildOptions.ConnectWithProfiler,
         };
 
         DoBuild(options);
@@ -50,7 +49,7 @@ public static class BuildScript
             scenes = GetEnabledScenes(),
             locationPathName = OutWin64,
             target = BuildTarget.StandaloneWindows64,
-            options = BuildOptions.None
+            options = BuildOptions.None,
         };
 
         DoBuild(options);
@@ -67,11 +66,13 @@ public static class BuildScript
         if (summary.result != BuildResult.Succeeded)
         {
             throw new System.Exception(
-                $"Build failed: {summary.result} | errors={summary.totalErrors}, warnings={summary.totalWarnings}");
+                $"Build failed: {summary.result} | errors={summary.totalErrors}, warnings={summary.totalWarnings}"
+            );
         }
 
         UnityEngine.Debug.Log(
-            $"Build succeeded: {summary.outputPath} | size={(summary.totalSize / (1024f * 1024f)):0.0} MB");
+            $"Build succeeded: {summary.outputPath} | size={(summary.totalSize / (1024f * 1024f)):0.0} MB"
+        );
     }
 }
 #endif
