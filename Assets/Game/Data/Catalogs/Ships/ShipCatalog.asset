@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 310cc7d5c17fa394f9d9134a4d3d4493, type: 3}
+  m_Name: ShipCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::SpaceTrader.Core.Data.ShipCatalog
+  items:
+  - {fileID: 11400000, guid: 02ddd4a78451fd24b9fc12939bb7e370, type: 2}

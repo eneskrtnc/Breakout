@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02691e50ea76e4a489addd1404c58bd5, type: 3}
   m_Name: PrefabLibrary
   m_EditorClassIdentifier: Assembly-CSharp::SpaceTrader.Core.PrefabLibrary
-  entries: []
+  entries:
+  - key: ship.starter_ship
+    prefab: {fileID: 1636194805920391145, guid: f8e64982eab094043957178ea47a10cf, type: 3}
