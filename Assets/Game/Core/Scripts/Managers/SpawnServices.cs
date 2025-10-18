@@ -1,5 +1,4 @@
 using SpaceTrader.Core.Data;
-using SpaceTrader.Game.UI;
 using UnityEngine;
 
 namespace SpaceTrader.Core

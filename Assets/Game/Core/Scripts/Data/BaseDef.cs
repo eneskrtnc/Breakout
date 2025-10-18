@@ -7,24 +7,24 @@ namespace SpaceTrader.Core.Data
     {
         [Header("Identity")]
         [SerializeField]
-        private string id; // "starter_ship"
+        private readonly string id; // "starter_ship"
 
         [SerializeField]
-        private string displayName = ""; // Oyuncuya görünen ad
+        private readonly string displayName = ""; // Oyuncuya görünen ad
 
         [TextArea]
         [SerializeField]
-        private string desc = "";
+        private readonly string desc = "";
 
         [SerializeField]
-        private string[] tags = System.Array.Empty<string>();
+        private readonly string[] tags = System.Array.Empty<string>();
 
         [Header("Presentation (2D)")]
         [SerializeField]
-        private Sprite icon; // UI ikon
+        private readonly Sprite icon; // UI ikon
 
         [SerializeField]
-        private GameObject prefab; // SpriteRenderer içeren prefab (2D)
+        private readonly GameObject prefab; // SpriteRenderer içeren prefab (2D)
 
         // ---- IKeyedDef sözleşmesi ----
         public string Id => id;

@@ -10,53 +10,77 @@ namespace SpaceTrader.Game.UI
     [ExecuteAlways]
     public class UiBar : MonoBehaviour
     {
-        public enum Orientation { Horizontal, Vertical }
-        public enum FullFxMode { None, FlashOnce, PulseWhileFull }
+        public enum Orientation
+        {
+            Horizontal,
+            Vertical,
+        }
+
+        public enum FullFxMode
+        {
+            None,
+            FlashOnce,
+            PulseWhileFull,
+        }
 
         [Header("Orientation")]
         public Orientation orientation = Orientation.Horizontal; // Energy için Vertical
 
         [Header("Targets")]
-        public RectTransform fillRt;         // Mask altındaki ÖN bar (asıl)
-        public Image fillImage;      // (ops) tint
+        public RectTransform fillRt; // Mask altındaki ÖN bar (asıl)
+        public Image fillImage; // (ops) tint
+
         [Tooltip("Opsiyonel: hasar animasyonu için geciken arka bar")]
-        public RectTransform backFillRt;     // Mask altındaki ARKA bar (ops)
+        public RectTransform backFillRt; // Mask altındaki ARKA bar (ops)
 
         [Header("Value")]
-        [Range(0, 1)] public float value01 = 1f;      // hedef değer (0..1)
+        [Range(0, 1)]
+        public float value01 = 1f; // hedef değer (0..1)
 
         [Header("Animation")]
         [Tooltip("Ön bar hızı (px/s)")]
         public float pixelsPerSecond = 320f;
+
         [Tooltip("Arka bar hızı (px/s). 0 → arka bar devre dışı")]
         public float backPixelsPerSecond = 160f;
 
         [Header("Critical (optional)")]
-        [Range(0, 1)] public float criticalThreshold = 0.25f;
+        [Range(0, 1)]
+        public float criticalThreshold = 0.25f;
         public Color normalTint = Color.white;
         public Color criticalTint = new Color(1f, 0.75f, 0.25f, 1f);
 
         [Header("Full FX")]
         public FullFxMode fullFxMode = FullFxMode.FlashOnce;
-        [Range(0.95f, 1f)] public float fullThreshold = 0.999f;
-        public Image fullFxImage;                 // Full olduğunda parlayacak overlay Image
-        public Color fullFxColor = Color.white;   // Bu renge boyanır
+
+        [Range(0.95f, 1f)]
+        public float fullThreshold = 0.999f;
+        public Image fullFxImage; // Full olduğunda parlayacak overlay Image
+        public Color fullFxColor = Color.white; // Bu renge boyanır
+
         [Tooltip("Flash süreleri (sn): in/hold/out")]
-        public float flashIn = 0.08f, flashHold = 0.10f, flashOut = 0.25f;
+        public float flashIn = 0.08f,
+            flashHold = 0.10f,
+            flashOut = 0.25f;
+
         [Tooltip("Pulse periyodu (sn) – full kaldığı sürece")]
         public float pulsePeriod = 0.8f;
+
         [Tooltip("Pulse minimum/maksimum opaklık")]
-        [Range(0f, 1f)] public float pulseAlphaMin = 0.10f;
-        [Range(0f, 1f)] public float pulseAlphaMax = 0.40f;
+        [Range(0f, 1f)]
+        public float pulseAlphaMin = 0.10f;
+
+        [Range(0f, 1f)]
+        public float pulseAlphaMax = 0.40f;
 
         // Dahili durum
-        float _maxLen;    // yatayda: genişlik, dikeyde: yükseklik (px)
-        float _frontLen;  // ön bar mevcut piksel uzunluğu
-        float _backLen;   // arka bar mevcut piksel uzunluğu
+        float _maxLen; // yatayda: genişlik, dikeyde: yükseklik (px)
+        float _frontLen; // ön bar mevcut piksel uzunluğu
+        float _backLen; // arka bar mevcut piksel uzunluğu
         Canvas _canvas;
 
         bool _wasFull;
-        float _fxTimer;   // flash zamanlayıcı
+        float _fxTimer; // flash zamanlayıcı
         bool _flashPlaying;
 
         void Awake()
@@ -83,19 +107,25 @@ namespace SpaceTrader.Game.UI
             flashHold = Mathf.Max(0f, flashHold);
             flashOut = Mathf.Max(0f, flashOut);
 
-            if (!Application.isPlaying) { CacheMax(); SnapImmediate(); }
+            if (!Application.isPlaying)
+            {
+                CacheMax();
+                SnapImmediate();
+            }
         }
 #endif
 
         void OnRectTransformDimensionsChange()
         {
             CacheMax();
-            if (!Application.isPlaying) SnapImmediate();
+            if (!Application.isPlaying)
+                SnapImmediate();
         }
 
         void Update()
         {
-            if (!Application.isPlaying) return;
+            if (!Application.isPlaying)
+                return;
             float dt = Time.unscaledDeltaTime;
             StepAnimate(dt);
             StepFullFx(dt);
@@ -104,12 +134,19 @@ namespace SpaceTrader.Game.UI
         // --- Helpers ---
         void CacheMax()
         {
-            if (!fillRt) return;
+            if (!fillRt)
+                return;
             var parent = fillRt.parent as RectTransform; // Mask
             if (parent)
-                _maxLen = (orientation == Orientation.Horizontal) ? parent.rect.width : parent.rect.height;
+                _maxLen =
+                    (orientation == Orientation.Horizontal)
+                        ? parent.rect.width
+                        : parent.rect.height;
             else
-                _maxLen = (orientation == Orientation.Horizontal) ? fillRt.sizeDelta.x : fillRt.sizeDelta.y;
+                _maxLen =
+                    (orientation == Orientation.Horizontal)
+                        ? fillRt.sizeDelta.x
+                        : fillRt.sizeDelta.y;
 
             _maxLen = Mathf.Max(0f, _maxLen);
         }
@@ -153,32 +190,42 @@ namespace SpaceTrader.Game.UI
 
         static float MoveTowardsPixels(float current, float target, float step)
         {
-            if (Mathf.Approximately(current, target)) return target;
+            if (Mathf.Approximately(current, target))
+                return target;
             float dir = Mathf.Sign(target - current);
             float next = current + dir * step;
-            if ((dir > 0f && next > target) || (dir < 0f && next < target)) next = target;
+            if ((dir > 0f && next > target) || (dir < 0f && next < target))
+                next = target;
             return next;
         }
 
         void ApplyDims()
         {
-            if (!fillRt) return;
+            if (!fillRt)
+                return;
 
             var s = fillRt.sizeDelta;
-            if (orientation == Orientation.Horizontal) s.x = _frontLen; else s.y = _frontLen;
+            if (orientation == Orientation.Horizontal)
+                s.x = _frontLen;
+            else
+                s.y = _frontLen;
             fillRt.sizeDelta = s;
 
             if (backFillRt)
             {
                 var sb = backFillRt.sizeDelta;
-                if (orientation == Orientation.Horizontal) sb.x = _backLen; else sb.y = _backLen;
+                if (orientation == Orientation.Horizontal)
+                    sb.x = _backLen;
+                else
+                    sb.y = _backLen;
                 backFillRt.sizeDelta = sb;
             }
         }
 
         void ApplyTint()
         {
-            if (!fillImage) return;
+            if (!fillImage)
+                return;
             float k = Mathf.InverseLerp(criticalThreshold, 0f, value01);
             fillImage.color = Color.Lerp(normalTint, criticalTint, Mathf.Clamp01(k));
         }
@@ -187,7 +234,8 @@ namespace SpaceTrader.Game.UI
 
         void ApplyFullFxInstant()
         {
-            if (!fullFxImage) return;
+            if (!fullFxImage)
+                return;
 
             bool isFull = value01 >= fullThreshold;
             _wasFull = isFull;
@@ -214,7 +262,9 @@ namespace SpaceTrader.Game.UI
                     _flashPlaying = true;
                     _fxTimer = 0f;
                     // rengi uygula
-                    var c = fullFxColor; c.a = 0f; fullFxImage.color = c;
+                    var c = fullFxColor;
+                    c.a = 0f;
+                    fullFxImage.color = c;
                 }
             }
 
@@ -225,9 +275,9 @@ namespace SpaceTrader.Game.UI
                     _fxTimer += dt;
                     float a = 0f;
                     float t = _fxTimer;
-                    if (t <= flashIn)                          // fade in
+                    if (t <= flashIn) // fade in
                         a = Mathf.Clamp01(t / flashIn);
-                    else if (t <= flashIn + flashHold)         // hold
+                    else if (t <= flashIn + flashHold) // hold
                         a = 1f;
                     else if (t <= flashIn + flashHold + flashOut) // fade out
                         a = 1f - Mathf.Clamp01((t - flashIn - flashHold) / flashOut);
@@ -237,7 +287,8 @@ namespace SpaceTrader.Game.UI
                         _flashPlaying = false; // bitti
                     }
 
-                    var c = fullFxColor; c.a = a;
+                    var c = fullFxColor;
+                    c.a = a;
                     fullFxImage.color = c;
                 }
                 else
@@ -245,7 +296,9 @@ namespace SpaceTrader.Game.UI
                     // full değilse overlay kapalı kalsın
                     if (!isFull)
                     {
-                        var c = fullFxImage.color; c.a = 0f; fullFxImage.color = c;
+                        var c = fullFxImage.color;
+                        c.a = 0f;
+                        fullFxImage.color = c;
                     }
                 }
             }
@@ -256,12 +309,16 @@ namespace SpaceTrader.Game.UI
                     _fxTimer += dt;
                     float phase = Mathf.PingPong(_fxTimer / pulsePeriod, 1f);
                     float a = Mathf.Lerp(pulseAlphaMin, pulseAlphaMax, phase);
-                    var c = fullFxColor; c.a = a; fullFxImage.color = c;
+                    var c = fullFxColor;
+                    c.a = a;
+                    fullFxImage.color = c;
                 }
                 else
                 {
                     _fxTimer = 0f;
-                    var c = fullFxImage.color; c.a = 0f; fullFxImage.color = c;
+                    var c = fullFxImage.color;
+                    c.a = 0f;
+                    fullFxImage.color = c;
                 }
             }
 

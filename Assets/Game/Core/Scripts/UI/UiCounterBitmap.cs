@@ -14,19 +14,20 @@ namespace SpaceTrader.Game.UI
     public class UiCounterBitmap : MonoBehaviour
     {
         [Header("Refs")]
-        public RectTransform digitsRoot;  // "Digits" container
-        public Image digitTemplate;       // disabled Image (5x7 sprite, herhangi biri)
+        public RectTransform digitsRoot; // "Digits" container
+        public Image digitTemplate; // disabled Image (5x7 sprite, herhangi biri)
+
         [Tooltip("0..9 zorunlu; (+,-,x,/,:) opsiyonel")]
         public Sprite[] glyphs;
 
         [Header("Layout")]
-        public bool alignRight = true;    // sağa yasla, sola büyüt
-        public int pixelSpacing = 1;     // karakterler arası PX
+        public bool alignRight = true; // sağa yasla, sola büyüt
+        public int pixelSpacing = 1; // karakterler arası PX
 
         [Header("Icon (optional)")]
-        public RectTransform iconRt;      // coin
+        public RectTransform iconRt; // coin
         public int iconSpacing = 4;
-        public bool iconOnLeft = true;  // coin solda
+        public bool iconOnLeft = true; // coin solda
 
         [Header("Optional: parent layout size")]
         public LayoutElement layoutElement;
@@ -73,14 +74,16 @@ namespace SpaceTrader.Game.UI
 
         public void SetValue(int v)
         {
-            if (Application.isPlaying && v == value) return;
+            if (Application.isPlaying && v == value)
+                return;
             value = v;
             Redraw();
         }
 
         void Redraw()
         {
-            if (!digitsRoot || !digitTemplate || glyphs == null || glyphs.Length < 10) return;
+            if (!digitsRoot || !digitTemplate || glyphs == null || glyphs.Length < 10)
+                return;
 
             // 1) Değeri karakterlere çevir
             var chars = ToCharArray(value);
@@ -105,7 +108,8 @@ namespace SpaceTrader.Game.UI
                 char ch = chars[visualIndex];
 
                 int gi = CharToGlyphIndex(ch);
-                if (gi < 0 || gi >= glyphs.Length) gi = 0;
+                if (gi < 0 || gi >= glyphs.Length)
+                    gi = 0;
 
                 var img = _pool[i];
                 img.sprite = glyphs[gi];
@@ -123,7 +127,7 @@ namespace SpaceTrader.Game.UI
                     rt.anchorMin = rt.anchorMax = new Vector2(1f, 0.5f);
                     rt.pivot = new Vector2(1f, 0.5f);
 
-                    int xPixels = -((i + 1) * GLYPH_W + i * gap);   // tam px
+                    int xPixels = -((i + 1) * GLYPH_W + i * gap); // tam px
                     rt.anchoredPosition = new Vector2(xPixels * px, 0f);
                 }
                 else
@@ -152,8 +156,9 @@ namespace SpaceTrader.Game.UI
             {
                 float iconW = iconRt ? iconRt.rect.width : GLYPH_W * px;
                 float iconH = iconRt ? iconRt.rect.height : GLYPH_H * px;
-                float width = iconOnLeft ? (iconW + iconSpacing * px + totalWpx * px)
-                                          : (totalWpx * px + iconSpacing * px + iconW);
+                float width = iconOnLeft
+                    ? (iconW + iconSpacing * px + totalWpx * px)
+                    : (totalWpx * px + iconSpacing * px + iconW);
                 float height = Mathf.Max(iconH, GLYPH_H * px);
                 layoutElement.preferredWidth = width;
                 layoutElement.preferredHeight = height;
@@ -164,22 +169,36 @@ namespace SpaceTrader.Game.UI
 
         static char[] ToCharArray(int v)
         {
-            if (v == 0) return new[] { '0' };
-            bool neg = v < 0; if (neg) v = -v;
+            if (v == 0)
+                return new[] { '0' };
+            bool neg = v < 0;
+            if (neg)
+                v = -v;
             var s = v.ToString();
-            if (neg) s = "-" + s;
+            if (neg)
+                s = "-" + s;
             return s.ToCharArray();
         }
 
         int CharToGlyphIndex(char c)
         {
-            if (c >= '0' && c <= '9') return c - '0';
-            return c switch { '+' => 10, '-' => 11, 'x' => 12, '/' => 13, ':' => 14, _ => 0 };
+            if (c >= '0' && c <= '9')
+                return c - '0';
+            return c switch
+            {
+                '+' => 10,
+                '-' => 11,
+                'x' => 12,
+                '/' => 13,
+                ':' => 14,
+                _ => 0,
+            };
         }
 
         void EnsureTemplateDisabled()
         {
-            if (!digitTemplate) return;
+            if (!digitTemplate)
+                return;
             digitTemplate.raycastTarget = false;
             if (digitTemplate.gameObject.activeSelf)
                 digitTemplate.gameObject.SetActive(false);
@@ -188,20 +207,24 @@ namespace SpaceTrader.Game.UI
         void HideAll()
         {
             for (int i = 0; i < _pool.Count; i++)
-                if (_pool[i]) _pool[i].gameObject.SetActive(false);
+                if (_pool[i])
+                    _pool[i].gameObject.SetActive(false);
         }
 
         void AdoptExistingChildren()
         {
-            if (!digitsRoot || _pool.Count > 0) return;
+            if (!digitsRoot || _pool.Count > 0)
+                return;
 
             for (int i = 0; i < digitsRoot.childCount; i++)
             {
                 var t = digitsRoot.GetChild(i);
-                if (digitTemplate && t == digitTemplate.transform) continue;
+                if (digitTemplate && t == digitTemplate.transform)
+                    continue;
 
                 var img = t.GetComponent<Image>();
-                if (!img) continue;
+                if (!img)
+                    continue;
 
                 ConfigureDigitImage(img);
                 img.gameObject.SetActive(false);
@@ -226,7 +249,8 @@ namespace SpaceTrader.Game.UI
         {
             img.raycastTarget = false;
             var le = img.GetComponent<LayoutElement>();
-            if (!le) le = img.gameObject.AddComponent<LayoutElement>();
+            if (!le)
+                le = img.gameObject.AddComponent<LayoutElement>();
             le.ignoreLayout = true;
         }
     }

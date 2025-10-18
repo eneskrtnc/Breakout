@@ -12,10 +12,12 @@ namespace SpaceTrader.Game.UI
 
         public void Set(int value)
         {
-            if (value == Coins) return;
+            if (value == Coins)
+                return;
             Coins = value;
             OnCoinsChanged?.Invoke(Coins);
         }
+
         void Awake()
         {
             var wallet = FindFirstObjectByType<Wallet>();

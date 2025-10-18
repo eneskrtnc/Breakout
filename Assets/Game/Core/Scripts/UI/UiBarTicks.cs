@@ -11,18 +11,24 @@ namespace SpaceTrader.Game.UI
     [ExecuteAlways]
     public class UiBarTicks : MonoBehaviour
     {
-        public enum Orientation { Horizontal, Vertical }
+        public enum Orientation
+        {
+            Horizontal,
+            Vertical,
+        }
 
         [Header("Orientation")]
         public Orientation orientation = Orientation.Horizontal; // Energy dikey için Vertical
 
         [Header("Targets")]
-        public RectTransform targetRect;      // ölçü referansı (Frame veya Mask)
-        public RectTransform ticksContainer;  // çizgilerin parent'ı
-        public Image tickTemplate;            // 1x1 beyaz Image (GameObject disabled)
+        public RectTransform targetRect; // ölçü referansı (Frame veya Mask)
+        public RectTransform ticksContainer; // çizgilerin parent'ı
+        public Image tickTemplate; // 1x1 beyaz Image (GameObject disabled)
 
         [Header("Layout")]
-        [Range(2, 20)] public int divisions = 10;   // 10 => %10
+        [Range(2, 20)]
+        public int divisions = 10; // 10 => %10
+
         // Yatay için sol/sağ; dikey için üst/alt padding kullanılır:
         public float leftPadding = 0f;
         public float rightPadding = 0f;
@@ -30,7 +36,8 @@ namespace SpaceTrader.Game.UI
         public float bottomPadding = 0f;
 
         [Header("Style")]
-        [Range(0f, 1f)] public float alpha = 0.45f;
+        [Range(0f, 1f)]
+        public float alpha = 0.45f;
         public Color color = new Color32(33, 41, 54, 255); // #212936
         public bool drawEnds = false; // %0 ve %100 dahil mi?
 
@@ -38,10 +45,28 @@ namespace SpaceTrader.Game.UI
         bool _dirty;
         readonly List<Image> _pool = new List<Image>();
 
-        void Awake() { _canvas = GetComponentInParent<Canvas>(); }
-        void OnEnable() { MarkDirty(); }
-        void OnDisable() { for (int i = 0; i < _pool.Count; i++) if (_pool[i]) _pool[i].gameObject.SetActive(false); }
-        void OnRectTransformDimensionsChange() { if (isActiveAndEnabled) MarkDirty(); }
+        void Awake()
+        {
+            _canvas = GetComponentInParent<Canvas>();
+        }
+
+        void OnEnable()
+        {
+            MarkDirty();
+        }
+
+        void OnDisable()
+        {
+            for (int i = 0; i < _pool.Count; i++)
+                if (_pool[i])
+                    _pool[i].gameObject.SetActive(false);
+        }
+
+        void OnRectTransformDimensionsChange()
+        {
+            if (isActiveAndEnabled)
+                MarkDirty();
+        }
 
 #if UNITY_EDITOR
         void OnValidate()
@@ -52,13 +77,19 @@ namespace SpaceTrader.Game.UI
         }
 #endif
 
-        void Update() { if (_dirty) RedrawNow(); }
+        void Update()
+        {
+            if (_dirty)
+                RedrawNow();
+        }
+
         void MarkDirty() => _dirty = true;
 
         void RedrawNow()
         {
             _dirty = false;
-            if (!_canvas || !targetRect || !ticksContainer || !tickTemplate) return;
+            if (!_canvas || !targetRect || !ticksContainer || !tickTemplate)
+                return;
 
             float px = 1f / Mathf.Max(1f, _canvas.scaleFactor);
 
@@ -66,7 +97,11 @@ namespace SpaceTrader.Game.UI
             {
                 float w = targetRect.rect.width - (leftPadding + rightPadding);
                 float h = targetRect.rect.height - (topPadding + bottomPadding);
-                if (w <= 0f || h <= 0f) { DisableAll(); return; }
+                if (w <= 0f || h <= 0f)
+                {
+                    DisableAll();
+                    return;
+                }
 
                 int start = drawEnds ? 0 : 1;
                 int end = drawEnds ? divisions : divisions - 1;
@@ -88,13 +123,18 @@ namespace SpaceTrader.Game.UI
                     rt.anchoredPosition = new Vector2(x, 0f);
                 }
 
-                for (int i = needed; i < _pool.Count; i++) _pool[i].gameObject.SetActive(false);
+                for (int i = needed; i < _pool.Count; i++)
+                    _pool[i].gameObject.SetActive(false);
             }
             else // Vertical
             {
                 float w = targetRect.rect.width - (leftPadding + rightPadding);
                 float h = targetRect.rect.height - (topPadding + bottomPadding);
-                if (w <= 0f || h <= 0f) { DisableAll(); return; }
+                if (w <= 0f || h <= 0f)
+                {
+                    DisableAll();
+                    return;
+                }
 
                 int start = drawEnds ? 0 : 1;
                 int end = drawEnds ? divisions : divisions - 1;
@@ -116,7 +156,8 @@ namespace SpaceTrader.Game.UI
                     rt.anchoredPosition = new Vector2(0f, y);
                 }
 
-                for (int i = needed; i < _pool.Count; i++) _pool[i].gameObject.SetActive(false);
+                for (int i = needed; i < _pool.Count; i++)
+                    _pool[i].gameObject.SetActive(false);
             }
         }
 
@@ -127,9 +168,11 @@ namespace SpaceTrader.Game.UI
                 for (int i = 0; i < ticksContainer.childCount; i++)
                 {
                     var t = ticksContainer.GetChild(i);
-                    if (t == tickTemplate.transform) continue;
+                    if (t == tickTemplate.transform)
+                        continue;
                     var img = t.GetComponent<Image>();
-                    if (img) _pool.Add(img);
+                    if (img)
+                        _pool.Add(img);
                 }
             }
             while (_pool.Count < count)
@@ -143,7 +186,8 @@ namespace SpaceTrader.Game.UI
         void DisableAll()
         {
             for (int i = 0; i < _pool.Count; i++)
-                if (_pool[i]) _pool[i].gameObject.SetActive(false);
+                if (_pool[i])
+                    _pool[i].gameObject.SetActive(false);
         }
     }
 }

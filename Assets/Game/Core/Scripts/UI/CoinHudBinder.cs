@@ -10,14 +10,16 @@ namespace SpaceTrader.Game.UI
 
         void OnEnable()
         {
-            if (!wallet || !counter) return;
+            if (!wallet || !counter)
+                return;
             wallet.OnCoinsChanged += counter.SetValue;
             counter.SetValue(wallet.Coins);
         }
 
         void OnDisable()
         {
-            if (wallet != null) wallet.OnCoinsChanged -= counter.SetValue;
+            if (wallet != null)
+                wallet.OnCoinsChanged -= counter.SetValue;
         }
     }
 }
