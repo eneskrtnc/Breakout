@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d23d75c096b2a3942b466307c0e01036
+guid: c2abd5cae62487748b73b67ddbda7230
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6176110321221878314
-    second: Hearth_0
+      213: 1513897834440359457
+    second: ui_icon_shield_64_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,7 +48,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 64
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Hearth_0
+      name: ui_icon_shield_64_0
       rect:
         serializedVersion: 2
         x: 0
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6dd32f1a26c0a4aa0800000000000000
-      internalID: -6176110321221878314
+      spriteID: 12efc083f02720510800000000000000
+      internalID: 1513897834440359457
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Hearth_0: -6176110321221878314
+      ui_icon_shield_64_0: 1513897834440359457
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
